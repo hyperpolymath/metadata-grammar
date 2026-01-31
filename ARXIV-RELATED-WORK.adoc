@@ -1,0 +1,151 @@
+= Related Work Section (Draft for arXiv Position Paper)
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:license: PMPL-1.0-or-later
+
+== Related Work
+
+Journey Grammar for Databases draws on established concepts from cartography, philosophy, and epistemology, applying them systematically to database metadata—a domain where these ideas have been conspicuously absent.
+
+=== Cartography & Geographic Information Systems
+
+**The map is not the territory** (Korzybski, 1931) <<korzybski1931>> is the foundational insight underlying our D_p/D_n distinction. Korzybski argued that representations (maps) are inherently incomplete approximations of reality (territory), differing in structure and necessarily omitting details. We extend this to databases: phenomenal databases (D_p) are partial maps of noumenal reality (D_n).
+
+**Critical cartography** (Harley, 1989 <<harley1989>>; Wood, 1992 <<wood1992>>) established that maps are not neutral representations but constructed artifacts shaped by perspective, power, and available instruments. Our concept of **emerging maps on journeys** builds on this: D_p instances don't pre-exist observation—they emerge from the process of measurement, carrying the biases and limitations of their creation context.
+
+**Historical cartography** documents how maps evolved during the Age of Exploration (1400s-1900s), progressively filling *terra incognita* while acknowledging "here be dragons" for unmapped regions <<short2003>>. We adopt this framing explicitly: verisimdb as a modern atlas coordinating D_p instances (maps), with explicit marking of known coverage gaps (Zone 2) and unknown darkness (Zone 3).
+
+**GIS and spatial data quality** research extensively covers spatial coverage, resolution, positional accuracy, and uncertainty <<goodchild2009>>. However, GIS focuses on *geographic* data quality. **We generalize these concepts** to arbitrary phenomenal databases (not just spatial), adding temporal evolution tracking and epistemic humility metrics.
+
+**Contribution**: We translate cartographic principles from geographic maps to database metadata, creating a formal grammar for expressing coverage, blind spots, and exploration progress across all data domains.
+
+=== Philosophy & Epistemology
+
+**Kant's phenomenal/noumenal distinction** (1781) <<kant1781>> separates phenomena (things as they appear to us through observation) from noumena (things-in-themselves, independent of observation). Our **D_p/D_n notation** directly adapts this: D_p are phenomenal databases (observations), D_n is the noumenal database (reality itself, unknowable in totality).
+
+**Known unknowns vs. unknown unknowns** gained public attention via Rumsfeld (2002) <<rumsfeld2002>> but has deeper roots in epistemology and risk analysis (Taleb, 2007 <<taleb2007>>; Dietz, 2013 <<dietz2013>>). Our **three-zone model** formalizes this:
+- Zone 1 (white box ~15%): Known knowns—what we've measured
+- Zone 2 (known darkness ~25%): Known unknowns—identified blind spots
+- Zone 3 (unknown darkness ~60%): Unknown unknowns—unconceived domains
+
+**Epistemic humility** in science (Rescher, 2009 <<rescher2009>>) advocates acknowledging ignorance as scientific virtue. We operationalize this through explicit coverage metrics and blind spot catalogs, making humility *machine-readable*.
+
+**Contribution**: We formalize philosophical concepts (phenomenal/noumenal, epistemic humility) as database metadata structures with provable properties (Idris2 types) and queryable semantics (SPARQL extensions).
+
+=== Database Metadata Standards
+
+**VoID (Vocabulary of Interlinked Datasets)** (Alexander et al., 2011) <<void2011>> provides RDF vocabulary for describing linked datasets. VoID includes properties like `void:entities`, `void:triples`, and `void:sparqlEndpoint`. **Limitation**: VoID is a *vocabulary* (terms + definitions), not a *grammar* (syntax + semantics + composition rules). VoID has no concept of:
+- Temporal evolution of datasets
+- Known blind spots or coverage gaps
+- Epistemic humility metrics
+- Homoiconic containers (datasets describing their own metadata)
+- Metamorphic transformations between representations
+
+**Dublin Core** (Weibel et al., 1998) <<dublincore1998>> provides 15 core metadata elements (`dc:creator`, `dc:date`, etc.). **Limitation**: Designed for resource discovery, not cartographic coverage tracking. No spatiotemporal coverage primitives, no provenance beyond `dc:source`, no blind spot identification.
+
+**DCAT (Data Catalog Vocabulary)** (Maali & Erickson, 2014) <<dcat2014>> extends Dublin Core for government data catalogs. Adds `dcat:Dataset`, `dcat:Distribution`, spatial/temporal coverage. **Limitation**: Coverage is *descriptive* ("this dataset covers 2010-2020") not *cartographic* (no tracking of gaps, no federation coordination, no temporal queries like "what coverage existed on date X?").
+
+**Schema.org Dataset** (Guha et al., 2016) <<schemaorg2016>> provides web-friendly dataset markup. **Limitation**: Focused on SEO and discovery, not scientific cartography or epistemic humility.
+
+**Contribution**: JGD is a *grammar*, not just a vocabulary. It adds compositional rules (EBNF syntax), formal semantics (Idris2 dependent types), transformation rules (category theory), and temporal cartography (verisimdb integration). We don't replace VoID/DCAT—we provide the grammatical infrastructure they lack.
+
+=== Temporal Databases & Versioning
+
+**Temporal databases** (Snodgrass, 1999 <<snodgrass1999>>) support valid-time and transaction-time semantics. SQL:2011 added `SYSTEM_VERSIONING` for temporal tables. **Gap**: Temporal databases version *data*, not *metadata about coverage*. They can't answer "What spatial coverage did this database claim on 2020-01-01?" or "How has our knowledge of blind spots evolved?"
+
+**Git and version control** track file history with immutable commits, branching, merging. **Git-like semantics for metadata** (our verisimdb design) is inspired by this but applied to *cartographic evolution*: tracking how D_p instances' coverage, uncertainty, and blind spots change over time.
+
+**Contribution**: We extend temporal versioning from data to *metadata*, enabling time-travel queries over cartographic properties: "What did we know about global climate coverage in 2000 vs 2025?"
+
+=== Data Catalogs & Federations
+
+**CKAN** (Open Knowledge Foundation) and **Dataverse** (Harvard) provide data catalog platforms. **Limitation**: Centralized architectures with limited federation, no cartographic coordination, no blind spot tracking across distributed catalogs.
+
+**Federated databases** (Sheth & Larson, 1990 <<sheth1990>>) integrate heterogeneous data sources. **Limitation**: Focus on query optimization and schema integration, not on *mapping unexplored territory* or *guiding data collection* to fill coverage gaps.
+
+**Contribution**: verisimdb as cartographic index provides *atlas-based federation*: decentralized D_p instances register their coverage, atlas coordinates discovery, identifies gaps, and guides exploration priorities.
+
+=== AI Interpretability & Ethics
+
+**Explainable AI (XAI)** (Doshi-Velez & Kim, 2017 <<doshivelez2017>>; Ribeiro et al., 2016 <<ribeiro2016>>) focuses on interpreting model predictions (LIME, SHAP, attention visualization). This represents the **"black box obsession"** we critique.
+
+**AI Fairness** (Barocas & Selbst, 2016 <<barocas2016>>) addresses bias in training data. **Gap**: Identifies bias *in existing datasets* but lacks systematic framework for identifying *missing populations* (Zone 2) or *unconceived harms* (Zone 3).
+
+**Datasheets for Datasets** (Gebru et al., 2018 <<gebru2018>>) and **Model Cards** (Mitchell et al., 2019 <<mitchell2019>>) document dataset/model provenance and limitations. **Near miss**: These acknowledge limitations but don't provide *cartographic infrastructure* for federating knowledge of gaps across datasets or guiding exploration.
+
+**Contribution**: We invert the AI ethics question from "explain the model" (white box) to "map the unmeasured territory" (dark reality beyond the box). JGD provides infrastructure for cataloging coverage gaps (Zone 2) and acknowledging unknown unknowns (Zone 3).
+
+=== Synthesis: What JGD Contributes
+
+Journey Grammar for Databases **does not invent**:
+- Map/territory distinction (Korzybski, 1931)
+- Phenomenal/noumenal philosophy (Kant, 1781)
+- Known/unknown unknowns (epistemology, risk analysis)
+- Temporal databases (Snodgrass, 1999)
+- Metadata vocabularies (VoID, Dublin Core, DCAT)
+
+Journey Grammar for Databases **does contribute**:
+
+1. **Systematic application** of cartographic principles to database metadata
+2. **Formal grammar** (syntax + semantics + composition rules) beyond existing vocabularies
+3. **Homoiconic containers** (databases describing themselves using same grammar as contents)
+4. **Metamorphic transformations** (provable representation changes preserving invariants)
+5. **Temporal cartography** (verisimdb tracks D_p evolution, enables time-travel queries)
+6. **Epistemic humility infrastructure** (machine-readable coverage gaps, three-zone model)
+7. **Atlas-based federation** (coordinated exploration, blind spot identification)
+8. **Paradigm inversion** for AI ethics (explore unmeasured reality, not just interpret models)
+
+**We stand on giants' shoulders** (cartography, philosophy, databases) **to build infrastructure** these fields never targeted: *formal, compositional, temporally-aware, epistemically-humble database metadata*.
+
+The novelty is not the concepts—it's their **formalization and systematic application to a domain where they're absent**.
+
+== References
+
+[bibliography]
+- [[[korzybski1931]]] Korzybski, A. (1931). *Science and Sanity: An Introduction to Non-Aristotelian Systems and General Semantics*. Institute of General Semantics.
+
+- [[[harley1989]]] Harley, J. B. (1989). Deconstructing the map. *Cartographica*, 26(2), 1-20.
+
+- [[[wood1992]]] Wood, D. (1992). *The Power of Maps*. Guilford Press.
+
+- [[[short2003]]] Short, J. R. (2003). *The World Through Maps: A History of Cartography*. Firefly Books.
+
+- [[[goodchild2009]]] Goodchild, M. F. (2009). Geographic information systems and science: today and tomorrow. *Annals of GIS*, 15(1), 3-9.
+
+- [[[kant1781]]] Kant, I. (1781/1998). *Critique of Pure Reason*. Cambridge University Press.
+
+- [[[rumsfeld2002]]] Rumsfeld, D. (2002). DoD News Briefing, February 12, 2002.
+
+- [[[taleb2007]]] Taleb, N. N. (2007). *The Black Swan: The Impact of the Highly Improbable*. Random House.
+
+- [[[dietz2013]]] Dietz, T. (2013). Bringing values and deliberation to science communication. *PNAS*, 110(Supplement 3), 14081-14087.
+
+- [[[rescher2009]]] Rescher, N. (2009). *Ignorance: On the Wider Implications of Deficient Knowledge*. University of Pittsburgh Press.
+
+- [[[void2011]]] Alexander, K., Cyganiak, R., Hausenblas, M., & Zhao, J. (2011). Describing Linked Datasets with the VoID Vocabulary. W3C Interest Group Note.
+
+- [[[dublincore1998]]] Weibel, S., Kunze, J., Lagoze, C., & Wolf, M. (1998). Dublin Core Metadata for Resource Discovery. RFC 2413.
+
+- [[[dcat2014]]] Maali, F., & Erickson, J. (2014). Data Catalog Vocabulary (DCAT). W3C Recommendation.
+
+- [[[schemaorg2016]]] Guha, R. V., Brickley, D., & Macbeth, S. (2016). Schema.org: evolution of structured data on the web. *Communications of the ACM*, 59(2), 44-51.
+
+- [[[snodgrass1999]]] Snodgrass, R. T. (1999). *Developing Time-Oriented Database Applications in SQL*. Morgan Kaufmann.
+
+- [[[sheth1990]]] Sheth, A. P., & Larson, J. A. (1990). Federated database systems for managing distributed, heterogeneous, and autonomous databases. *ACM Computing Surveys*, 22(3), 183-236.
+
+- [[[doshivelez2017]]] Doshi-Velez, F., & Kim, B. (2017). Towards a rigorous science of interpretable machine learning. *arXiv preprint arXiv:1702.08608*.
+
+- [[[ribeiro2016]]] Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). "Why should I trust you?" Explaining the predictions of any classifier. *KDD 2016*, 1135-1144.
+
+- [[[barocas2016]]] Barocas, S., & Selbst, A. D. (2016). Big data's disparate impact. *California Law Review*, 104, 671.
+
+- [[[gebru2018]]] Gebru, T., Morgenstern, J., Vecchione, B., Vaughan, J. W., Wallach, H., Daumé III, H., & Crawford, K. (2018). Datasheets for datasets. *arXiv preprint arXiv:1803.09010*.
+
+- [[[mitchell2019]]] Mitchell, M., Wu, S., Zaldivar, A., Barnes, P., Vasserman, L., Hutchinson, B., ... & Gebru, T. (2019). Model cards for model reporting. *FAT* 2019*, 220-229.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later
