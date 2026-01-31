@@ -1,0 +1,275 @@
+= arXiv Paper for Journey Grammar for Databases - Timing & Approach
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:license: PMPL-1.0-or-later
+
+== Is arXiv Suitable?
+
+**YES** - Journey Grammar for Databases is highly suitable for arXiv.
+
+**Why:**
+
+1. **Novel paradigm shift** - The white box in darkness inversion is original philosophical contribution
+2. **Formal foundations** - Category theory, dependent types, RDF/SPARQL integration
+3. **Clear problem space** - Succeeding VoID/Dublin Core/DCAT with compositional grammar
+4. **Interdisciplinary** - Touches CS, philosophy, epistemology, information science
+5. **Preprint-friendly** - arXiv accepts position papers, white papers, and technical reports
+
+**Relevant arXiv categories:**
+
+- `cs.DB` - Databases (primary)
+- `cs.AI` - Artificial Intelligence (AI ethics reframing)
+- `cs.LO` - Logic in Computer Science (formal specification)
+- `cs.DL` - Digital Libraries (metadata standards)
+
+== Is It Premature?
+
+**DEPENDS on paper type:**
+
+=== Option 1: Position Paper (Ready NOW) ✓
+
+**Title**: "Journey Grammar for Databases: A Position Paper on Exploratory Data Cartography"
+
+**Status**: Ready to write and submit
+
+**What we have**:
+- ✓ Complete philosophical framework (PHILOSOPHY.adoc)
+- ✓ Paradigm shift clearly articulated
+- ✓ Map/territory distinction
+- ✓ Three-zone model
+- ✓ Clear problem statement
+- ✓ Architecture overview
+- ✓ Comparison to predecessors (VoID, Dublin Core, DCAT)
+
+**What we DON'T need** for a position paper:
+- Implementation (can describe planned approach)
+- Formal proofs (can sketch proof obligations)
+- Empirical evaluation (can propose evaluation criteria)
+- Case studies (can describe envisioned use cases)
+
+**Timeline**: Could submit in **1-2 weeks**
+
+**Length**: 8-12 pages
+
+=== Option 2: White Paper (Ready in 1 month)
+
+**Title**: "Journey Grammar for Databases: Cartographic Infrastructure for Mapping Reality Through Data"
+
+**Status**: Need formal specification (Phase 1) started
+
+**What we need**:
+- [ ] EBNF grammar for JGD syntax
+- [ ] Idris2 type sketches (basic types, no full proofs)
+- [ ] SHACL shapes for validation
+- [ ] JSON-LD context
+- [ ] Concrete examples of D_p instances
+
+**Timeline**: Could submit in **4-6 weeks**
+
+**Length**: 12-20 pages
+
+=== Option 3: Full Technical Paper (Ready in 6+ months)
+
+**Title**: "Journey Grammar for Databases: Formal Specification and Implementation"
+
+**Status**: Need Phase 1-2 complete
+
+**What we need**:
+- [ ] Complete formal specification (EBNF, Idris2, category theory)
+- [ ] Idris2 proofs of correctness properties
+- [ ] Zig FFI implementation
+- [ ] verisimdb integration
+- [ ] Case studies with real phenomenal databases
+- [ ] Performance evaluation
+- [ ] Empirical comparison to VoID/DCAT
+
+**Timeline**: Could submit in **6-12 months**
+
+**Length**: 20-30 pages
+
+== Recommendation
+
+=== Immediate: Position Paper (arXiv preprint)
+
+**Submit NOW** as a position paper to:
+
+1. **Stake claim** on the paradigm shift
+2. **Get feedback** from semantic web / database community
+3. **Build momentum** before implementation
+4. **Attract collaborators** for Phase 1-2
+5. **Reference point** for future technical papers
+
+**Structure**:
+
+```
+1. Introduction
+   - The black box obsession
+   - The paradigm shift: white box in darkness
+
+2. The Map and the Territory
+   - D_p (phenomenal databases) vs D_n (noumenal reality)
+   - Three zones of reality
+   - Emerging maps on journeys
+
+3. Why Not VoID/Dublin Core/DCAT?
+   - Vocabulary vs grammar
+   - Static vs temporal evolution
+   - Missing: homoiconic containers, metamorphic transforms
+
+4. Journey Grammar for Databases
+   - Core concepts (D_p, coverage, blind spots)
+   - Homoiconic containers
+   - Metamorphic transformations
+   - verisimdb as cartographic index
+
+5. Architecture Sketch
+   - Idris2 formal specification
+   - Storage independence
+   - Federation architecture
+
+6. Implications
+   - AI ethics: coverage not interpretability
+   - Data science: exploration not interpretation
+   - Scientific method: discovery not instrumentation
+
+7. Future Work
+   - Roadmap (Phase 1-6)
+   - Call for collaboration
+
+8. Conclusion
+   - Cartographers of the digital age
+```
+
+=== Later: Full Technical Paper (conference/journal)
+
+**After Phase 1-2 complete**, submit to:
+
+**Conferences:**
+- VLDB (Very Large Databases)
+- ISWC (International Semantic Web Conference)
+- SIGMOD (Special Interest Group on Management of Data)
+- WWW (The Web Conference)
+
+**Journals:**
+- Journal of Web Semantics
+- Semantic Web Journal
+- ACM Transactions on Database Systems
+- VLDB Journal
+
+== Draft Timeline
+
+|===
+| Milestone | Target Date | Deliverable
+
+| Position paper draft
+| Feb 7, 2026
+| 8-12 page arXiv preprint
+
+| Submit to arXiv
+| Feb 14, 2026
+| Public preprint available
+
+| Phase 1 complete (formal spec)
+| May 1, 2026
+| EBNF + Idris2 + SHACL
+
+| White paper draft
+| May 15, 2026
+| Extended technical report
+
+| Phase 2 complete (impl)
+| Aug 1, 2026
+| verisimdb integration, case studies
+
+| Full paper draft
+| Sep 1, 2026
+| Submit to ISWC 2027
+
+| ISWC 2027 submission
+| Oct 1, 2026
+| Full technical paper
+|===
+
+== What to Write First
+
+**For the position paper (next 1-2 weeks):**
+
+1. **Abstract** (200 words)
+   - Problem: Obsession with black boxes
+   - Solution: Shift to exploring unmeasured territory
+   - Contribution: JGD as cartographic infrastructure
+
+2. **Introduction** (2 pages)
+   - Schrödinger shift (dead/alive cat → are there cats beyond?)
+   - Vision blind spot analogy
+   - Map/territory distinction
+
+3. **The Paradigm Shift** (3 pages)
+   - White box in darkness
+   - Three zones
+   - Emerging maps on journeys
+
+4. **Journey Grammar for Databases** (3 pages)
+   - Core concepts (D_p, D_n)
+   - Homoiconic containers
+   - Metamorphic transformations
+   - Comparison to VoID/DCAT
+
+5. **Architecture Sketch** (2 pages)
+   - Formal specification approach
+   - Storage independence
+   - verisimdb integration
+
+6. **Implications & Future Work** (2 pages)
+   - Reframing AI ethics, data science, scientific method
+   - Roadmap
+   - Call for collaboration
+
+7. **Related Work** (1 page)
+   - VoID, Dublin Core, DCAT
+   - Data catalog standards
+   - Epistemic approaches to data
+
+== Key Messages
+
+**For reviewers/readers:**
+
+1. **Paradigm shift**: We've obsessed over black boxes (interpretability) when we should explore dark territory (unmeasured reality)
+
+2. **Original contribution**: Inverting the question from "Is the cat dead/alive?" to "Are there cats beyond?"
+
+3. **Practical value**: JGD provides cartographic infrastructure for mapping reality through federated databases
+
+4. **Formal rigor**: Dependent types (Idris2) prove correctness; category theory governs transformations
+
+5. **Epistemic humility**: Explicitly acknowledge Zone 3 (unknown unknowns ~60% of reality)
+
+6. **Call to action**: Join the journey of mapping measurable reality
+
+== Potential Objections & Responses
+
+**Objection 1**: "This is just VoID with extra philosophy"
+
+**Response**: VoID is a vocabulary (terms + definitions). JGD is a grammar (syntax + semantics + composition rules + transformations). VoID has no concept of: homoiconic containers, metamorphic transforms, temporal evolution, blind spot tracking, or epistemic humility metrics.
+
+**Objection 2**: "No implementation = vaporware"
+
+**Response**: This is a **position paper** staking a paradigm shift. Implementation follows (roadmap provided). Historical precedent: Codd's relational model (1970) was theoretical; implementations came later and validated the paradigm.
+
+**Objection 3**: "The philosophy is interesting but impractical"
+
+**Response**: Concrete impact on AI ethics (map coverage gaps instead of explaining models), data science (guide exploration not just interpretation), and scientific method (identify unmeasured domains). Practical architecture with verisimdb, SQL layer, and federation protocol.
+
+**Objection 4**: "Coverage estimates (15%/25%/60%) are made up"
+
+**Response**: **Yes, and we explicitly state this.** That's epistemic humility. We suspect vast unmeasured territory but have low confidence in the percentages. The point is acknowledging ignorance, not claiming precision.
+
+**Objection 5**: "Why not just extend VoID?"
+
+**Response**: VoID lacks: (1) formal grammar beyond vocabulary, (2) homoiconic container model, (3) metamorphic transformation framework, (4) temporal versioning semantics, (5) blind spot/epistemic humility concepts. These aren't extensions—they require rethinking from foundations.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later

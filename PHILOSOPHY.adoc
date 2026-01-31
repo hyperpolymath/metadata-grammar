@@ -153,6 +153,68 @@ The noumenal database—reality itself—is what we cannot see. The **unexplored
 - How to express coverage and uncertainty
 - How to track provenance and evolution
 
+=== Journey-Centric Cartography
+
+**Traditional cartography**: Map first, then journey
+- "Here's the map. Follow it."
+- Static representation
+- Pre-existing knowledge
+
+**Exploratory cartography**: Journey first, map emerges
+- "Journey into the unknown. The map emerges."
+- Dynamic representation
+- Knowledge created through exploration
+
+**The map is the trace of the journey**, not its prerequisite.
+
+**For phenomenal databases**:
+
+- **Before observation**: Territory exists but unmapped (D_n is there, D_p doesn't exist yet)
+- **During observation**: Map emerges from the journey of measurement
+- **After observation**: D_p exists as the trace/record of the exploration
+- **Continuous refinement**: Each revisit to the territory refines the map
+
+**Example - Climate mapping**:
+
+```
+1850: No systematic temperature measurement → No map
+    ↓ [Journey begins: deploy thermometers]
+1900: Sparse temperature records emerge → Rough map (D_p v1)
+    ↓ [Journey continues: expand coverage]
+1950: Denser networks, better instruments → Refined map (D_p v2)
+    ↓ [Journey expands: satellites added]
+2000: Global satellite coverage → Comprehensive map (D_p v3)
+    ↓ [Journey continues: resolution improves]
+2025: High-resolution, real-time → Detailed map (D_p v4)
+    ↓ [Journey never ends]
+```
+
+**Each version is a snapshot** of the map as it emerged at that point in the journey. The journey creates the map. The map records the journey.
+
+=== Emerging Maps on Journeys
+
+**The journey creates the map.**
+
+Maps don't exist before exploration—they **emerge** as we journey into unknown territory. Each expedition produces a new phenomenal database, a new partial map of reality.
+
+**The temporal nature of cartography**:
+
+```
+Time T₀: No map exists → Darkness
+    ↓ [Journey/Observation begins]
+Time T₁: Rough sketch emerges → Phenomenal database v1
+    ↓ [Further exploration]
+Time T₂: Details refined → Phenomenal database v2
+    ↓ [Coverage expands]
+Time T₃: Adjacent territories discovered → New databases, relationships mapped
+    ↓ [Contradictions identified]
+Time T₄: Errors corrected, maps integrated → Improved cartography
+    ↓ [Continuing journey]
+Time T∞: Approaching complete map → Limit never reached
+```
+
+**Maps are not static**—they evolve as journeys progress. Each observation refines the map. Each exploration reveals new territory. The map is a **living document** of our ongoing journey through reality.
+
 === Progressive Exploration
 
 ```
@@ -173,19 +235,21 @@ Iteratively better cartography of reality
 
 **Historical parallel**: European exploration 1400s-1900s
 
-- 1400s: Vast blank spaces on maps
+- 1400s: Vast blank spaces on maps, "here be dragons"
 - 1500s-1800s: Expeditions progressively map the world
-- Each expedition = phenomenal database
-- Atlases coordinate the maps
-- By 1900s: World largely mapped (but still refining)
+- Each expedition = phenomenal database (emerging map from the journey)
+- Atlases coordinate the maps as they emerge
+- By 1900s: World largely mapped (but still refining—journey continues)
+- **Key insight**: Maps emerged FROM the journeys, not before them
 
 **Data parallel**: Mapping reality through data
 
-- 1990s: Many domains unmeasured/unobserved
+- 1990s: Many domains unmeasured/unobserved (terra incognita)
 - 2000s-2020s: Sensors, satellites, digital exhaust create massive observations
-- Each dataset = phenomenal database
-- verisimdb = modern atlas system
+- Each dataset = phenomenal database (map emerging from measurement journey)
+- verisimdb = modern atlas system tracking emerging maps
 - 2030s+: Progressively complete cartography of measurable reality
+- **Key insight**: Data maps emerge FROM exploration, evolving as we journey deeper
 
 == The AI/ML Reframing
 
