@@ -15,32 +15,45 @@
      (repo "https://github.com/hyperpolymath/metadata-grammar"))
 
     (project-context
-     (name "Metadata Grammar")
-     (tagline "Formal, integrated metadata framework succeeding VoID, Dublin Core, and DCAT")
+     (name "Journey Grammar for Databases")
+     (tagline "Cartographic infrastructure for mapping reality through data")
+     (key-concepts "D_p" "D_n" "white-box-in-darkness" "homoiconic" "metamorphic" "emerging-maps")
      (tech-stack
-      (specification "Idris2" "SHACL" "OWL" "JSON-LD")
+      (specification "Idris2" "SHACL" "OWL" "JSON-LD" "EBNF" "Category-Theory")
       (implementation "Zig" "ReScript" "Julia" "Rust")
-      (integration "verisimdb" "SPARQL"))
+      (integration "verisimdb" "SPARQL" "VQL"))
      (rsr-compliant #t))
 
     (current-position
-     (phase "proof-of-concept")
-     (overall-completion 5)
+     (phase "documentation-complete")
+     (overall-completion 30)
      (components
-      ((name "Concept Documentation")
+      ((name "Philosophical Framework")
+       (completion 100)
+       (status "PHILOSOPHY.adoc, VISION-BLINDSPOT.adoc complete with map/territory and emerging maps"))
+      ((name "Practical Documentation")
        (completion 95)
-       (status "CONCEPT.adoc written, needs review"))
+       (status "CARTOGRAPHY.adoc, BACKENDS.adoc, JGD-SQL.adoc complete"))
+      ((name "Technical Specifications")
+       (completion 90)
+       (status "ARCHITECTURE.adoc, CONCEPT.adoc complete"))
+      ((name "Project Management")
+       (completion 100)
+       (status "ROADMAP.adoc, STATE.scm, ECOSYSTEM.scm, META.scm complete"))
+      ((name "arXiv Position Paper")
+       (completion 20)
+       (status "Discussion document created, ready to draft paper"))
       ((name "Formal Specification")
        (completion 0)
-       (status "Not started - Idris2 grammar pending"))
-      ((name "SHACL Shapes")
+       (status "Phase 1 - Idris2 grammar, SHACL, JSON-LD pending"))
+      ((name "Implementation")
        (completion 0)
-       (status "Not started - validation rules pending"))
+       (status "Phase 2-3 - Zig FFI, metamorphic library pending"))
       ((name "Tooling")
        (completion 0)
-       (status "Not started - awaiting specification")))
+       (status "Phase 4-5 - CLI, bindings, integration pending")))
      (working-features
-      "Documentation, concept, architectural design"))
+      "Complete documentation framework, paradigm shift articulated, architecture defined"))
 
     (route-to-mvp
      (milestones
@@ -87,10 +100,38 @@
       "Zig FFI implementation"))
 
     (session-history
-     ((date "2026-01-31")
+     ((date "2026-01-31T00:00")
       (accomplishments
        "Created metadata-grammar repo from rsr-template"
        "Wrote CONCEPT.adoc with full architecture"
        "Documented VoID/Dublin Core integration"
        "Defined 3-layer architecture (Core/Extensions/Bridges)"
-       "Specified verisimdb integration approach")))))
+       "Specified verisimdb integration approach"))
+
+     ((date "2026-01-31T12:00")
+      (accomplishments
+       "Renamed to Journey Grammar for Databases (JGD)"
+       "Articulated paradigm shift: white box in darkness"
+       "Introduced D_p/D_n notation (phenomenal/noumenal databases)"
+       "Created PHILOSOPHY.adoc with three-zone model"
+       "Created VISION-BLINDSPOT.adoc with Nature paper analogy"
+       "Created CARTOGRAPHY.adoc practical guide"
+       "Created ROADMAP.adoc 6-phase plan"
+       "Updated STATE.scm, ECOSYSTEM.scm, META.scm"))
+
+     ((date "2026-01-31T16:00")
+      (accomplishments
+       "Created BACKENDS.adoc storage independence architecture"
+       "Created JGD-SQL.adoc accessibility layer"
+       "Created ARCHITECTURE.adoc 4-layer system design"
+       "Documented VQL temporal query extensions"
+       "Specified Idris2 ABI + Zig FFI approach"))
+
+     ((date "2026-01-31T18:00")
+      (accomplishments
+       "Enhanced PHILOSOPHY.adoc with journey-centric cartography"
+       "Added 'Emerging Maps on Journeys' section"
+       "Emphasized map/territory distinction and temporal evolution"
+       "Created ARXIV-PAPER-DISCUSSION.adoc"
+       "Analyzed arXiv paper timing (position paper ready now)"
+       "Drafted paper structure and timeline")))))
