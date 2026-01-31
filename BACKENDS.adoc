@@ -1,0 +1,524 @@
+= Storage Backends for Journey Grammar for Databases
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:toclevels: 3
+:license: PMPL-1.0-or-later
+
+== Overview
+
+**Journey Grammar for Databases (JGD) is storage-independent.** It defines a grammar and conceptual framework that works with any backend capable of storing structured metadata.
+
+However, **verisimdb is the canonical/reference implementation** that fully realizes JGD's temporal cartography capabilities.
+
+== Design Principles
+
+=== Storage Independence
+
+**JGD does NOT mandate a specific backend.** The specification is abstract and can be implemented on:
+
+- RDF triplestores (Jena, Virtuoso, Blazegraph)
+- Property graphs (Neo4j, ArangoDB, JanusGraph)
+- SQL databases (PostgreSQL, MySQL, SQLite)
+- Document stores (MongoDB, CouchDB)
+- Hybrid/federated systems (verisimdb, polyglot persistence)
+
+**Why**: Enables adoption on existing infrastructure without forced migration.
+
+=== Minimal Backend Requirements
+
+Any backend supporting JGD must provide:
+
+1. **Structured storage** - Ability to store D_p metadata with properties
+2. **Query interface** - SPARQL, SQL, or equivalent query language
+3. **Federation support** - Can reference other D_p instances
+4. **Homoiconic capability** - Container can describe itself using JGD
+
+**Nice to have** (not required):
+- Temporal versioning (for cartographic evolution)
+- Spatial/temporal indexing (for coverage queries)
+- Transaction support (for atomic updates)
+
+=== Extension Points
+
+Backends can extend JGD with:
+
+- **Custom query languages** (VQL for verisimdb, Cypher for Neo4j)
+- **Specialized indexes** (R-tree for spatial, B-tree for temporal)
+- **Unique capabilities** (time-travel queries, graph algorithms)
+- **Performance optimizations** (column stores, caching)
+
+**Extension mechanism**: Backend-specific namespaces (e.g., `vsim:`, `neo4j:`, `pg:`)
+
+== Reference Implementation: verisimdb
+
+**verisimdb is the canonical backend** that demonstrates JGD's full potential.
+
+=== Why verisimdb?
+
+**Co-designed relationship**: JGD's concepts (D_p evolution, cartographic deltas, temporal queries) were developed alongside verisimdb's architecture.
+
+**Unique capabilities**:
+
+1. **Temporal versioning** - Track D_p evolution over time
+2. **Git-like semantics** - Immutable history, branching, merging
+3. **Time-travel queries** - "What did we know on 2020-01-01?"
+4. **Cartographic deltas** - Track how coverage/uncertainty improves
+5. **Homoiconic storage** - verisimdb IS a D_p describing database evolution
+
+**Natural fit**:
+```turtle
+# verisimdb as both container AND D_p
+:VerisimDB a jgd:StorageContainer, jgd:D_p ;
+    # As container: stores other D_p instances
+    jgd:stores :ClimateDB, :EconomicDB, :GenomicDB ;
+
+    # As D_p: observes database evolution domain
+    jgd:observes jgd-domain:DatabaseEvolution ;
+    jgd:temporalCoverage "2020-2026" ;
+
+    # Homoiconic: describes itself using JGD
+    jgd:describedBy jgd:JourneyGrammar .
+```
+
+=== VQL Extensions
+
+**VQL (Verisim Query Language)** extends SPARQL with temporal operators:
+
+**Standard SPARQL** (works on all backends):
+```sparql
+PREFIX jgd: <https://hyperpolymath.org/ns/jgd#>
+
+# Find D_p instances covering Europe
+SELECT ?db WHERE {
+    ?db a jgd:D_p ;
+        jgd:spatialCoverage ?spatial .
+    ?spatial geo:sfIntersects :Europe .
+}
+```
+
+**VQL temporal extension** (verisimdb-only):
+```sparql
+PREFIX jgd: <https://hyperpolymath.org/ns/jgd#>
+PREFIX vsim: <https://hyperpolymath.org/ns/verisimdb#>
+
+# What databases covered Europe on 2020-01-01?
+SELECT ?db AT TIME "2020-01-01T00:00:00Z" WHERE {
+    ?db a jgd:D_p ;
+        jgd:spatialCoverage ?spatial .
+    ?spatial geo:sfIntersects :Europe .
+}
+
+# How did coverage evolve from 2020 to 2025?
+SELECT ?db ?coverage_2020 ?coverage_2025 WHERE {
+    AT TIME "2020-01-01" { ?db jgd:spatialCoverage ?coverage_2020 }
+    AT TIME "2025-01-01" { ?db jgd:spatialCoverage ?coverage_2025 }
+}
+```
+
+**Cartographic delta queries** (verisimdb-only):
+```sparql
+PREFIX vsim: <https://hyperpolymath.org/ns/verisimdb#>
+
+# What blind spots were filled between versions?
+SELECT ?db ?blindspot WHERE {
+    ?db vsim:cartographicDelta ?delta .
+    ?delta vsim:blindSpotFilled ?blindspot ;
+           vsim:filledAt ?timestamp .
+    FILTER(?timestamp > "2020-01-01"^^xsd:date)
+}
+
+# Track uncertainty reduction over time
+SELECT ?db ?version ?uncertainty WHERE {
+    ?db vsim:versionHistory ?history .
+    ?history vsim:snapshot ?version .
+    ?version jgd:uncertainty ?uncertainty ;
+             vsim:validTime ?time .
+    ORDER BY ?time
+}
+```
+
+=== verisimdb-Specific Metadata
+
+**Extensions beyond core JGD**:
+
+```turtle
+:ClimateDB a jgd:D_p ;
+    # Core JGD (works everywhere)
+    jgd:spatialCoverage :NorthernHemisphere ;
+    jgd:temporalCoverage "1980-2025" ;
+    jgd:knownBlindSpots [ jgd:spatial :SouthernOceans ] ;
+
+    # verisimdb extensions
+    vsim:versionHistory :ClimateDB-History ;
+    vsim:currentSnapshot :ClimateDB_v2025 ;
+    vsim:cartographicDelta [
+        vsim:from :ClimateDB_v2020 ;
+        vsim:to :ClimateDB_v2025 ;
+        vsim:blindSpotFilled :ArcticRegion ;
+        vsim:uncertaintyReduced 0.15 ;
+        vsim:resolutionImproved "1km → 500m"
+    ] .
+
+:ClimateDB-History a vsim:VersionHistory ;
+    vsim:snapshots (
+        :ClimateDB_v2020
+        :ClimateDB_v2022
+        :ClimateDB_v2025
+    ) .
+```
+
+== Other Backend Implementations
+
+=== RDF Triplestore
+
+**Examples**: Apache Jena, Virtuoso, Blazegraph
+
+**What works**:
+- All core JGD metadata (D_p, coverage, blind spots)
+- SPARQL queries for discovery and federation
+- Homoiconic containers (triples describe triples)
+
+**What doesn't work**:
+- Temporal queries (no native time-travel)
+- Cartographic deltas (no version history)
+- Requires external versioning (Git, named graphs per version)
+
+**Implementation approach**:
+```turtle
+# Named graphs for versioning (workaround)
+GRAPH :ClimateDB_v2020 {
+    :ClimateDB a jgd:D_p ;
+        jgd:spatialCoverage :LimitedCoverage ;
+        jgd:uncertainty jgd:High .
+}
+
+GRAPH :ClimateDB_v2025 {
+    :ClimateDB a jgd:D_p ;
+        jgd:spatialCoverage :ExpandedCoverage ;
+        jgd:uncertainty jgd:Medium .
+}
+
+# Metadata about versions
+:ClimateDB_v2025 prov:wasDerivedFrom :ClimateDB_v2020 ;
+                 prov:generatedAtTime "2025-01-31"^^xsd:dateTime .
+```
+
+**Recommended for**: Static catalogs, one-time snapshots, federation without temporal queries.
+
+=== SQL Database
+
+**Examples**: PostgreSQL (with temporal tables), MySQL, SQLite
+
+**What works**:
+- Core JGD metadata stored as rows/JSON columns
+- SQL queries with spatial/temporal extensions (PostGIS, TimescaleDB)
+- Homoiconic via metadata tables
+
+**What doesn't work**:
+- RDF/graph queries (requires translation layer)
+- Native SPARQL (need SQL-to-SPARQL bridge)
+
+**Implementation approach**:
+```sql
+-- D_p table
+CREATE TABLE d_p (
+    id UUID PRIMARY KEY,
+    observes TEXT NOT NULL,
+    spatial_coverage GEOMETRY(POLYGON),
+    temporal_coverage TSTZRANGE,
+    known_blindspots JSONB,
+    uncertainty TEXT,
+    metadata JSONB  -- Full JGD metadata as JSON
+);
+
+-- Temporal versioning (PostgreSQL)
+CREATE TABLE d_p_history (
+    id UUID,
+    valid_from TIMESTAMPTZ NOT NULL,
+    valid_to TIMESTAMPTZ,
+    data JSONB
+) PARTITION BY RANGE (valid_from);
+
+-- Query D_p at specific time
+SELECT * FROM d_p_history
+WHERE id = 'climate-db-uuid'
+  AND valid_from <= '2020-01-01'
+  AND (valid_to IS NULL OR valid_to > '2020-01-01');
+```
+
+**Recommended for**: Enterprise environments, existing SQL infrastructure, spatial/temporal analytics.
+
+=== Property Graph
+
+**Examples**: Neo4j, ArangoDB, JanusGraph
+
+**What works**:
+- D_p as nodes, relationships as edges
+- Cypher/Gremlin queries for graph traversal
+- Federation via edges between D_p nodes
+
+**What doesn't work**:
+- Native SPARQL (need Cypher-to-SPARQL)
+- Temporal queries (requires versioning plugin)
+
+**Implementation approach**:
+```cypher
+// Create D_p node
+CREATE (db:D_p {
+    id: 'climate-db',
+    observes: 'global-climate',
+    spatialCoverage: 'northern-hemisphere',
+    temporalCoverage: '1980-2025'
+})
+
+// Relationships
+CREATE (db)-[:DERIVED_FROM]->(oldDB:D_p {id: 'climate-db-v2020'})
+CREATE (db)-[:FILLS_BLINDSPOT]->(:BlindSpot {region: 'arctic'})
+CREATE (db)-[:STORED_IN]->(container:StorageContainer {type: 'neo4j'})
+
+// Query federation
+MATCH (db:D_p)-[:COMPLEMENTS]->(other:D_p)
+WHERE db.spatialCoverage = 'europe'
+RETURN db, other
+```
+
+**Recommended for**: Graph-heavy queries, relationship analysis, federation exploration.
+
+=== Document Store
+
+**Examples**: MongoDB, CouchDB
+
+**What works**:
+- D_p as JSON documents
+- Full-text search, geospatial queries
+- Homoiconic (documents describe documents)
+
+**What doesn't work**:
+- SPARQL queries (JSON-LD bridge needed)
+- Temporal queries (requires change streams)
+
+**Implementation approach**:
+```json
+{
+  "@context": "https://hyperpolymath.org/ns/jgd/context.jsonld",
+  "@type": "jgd:D_p",
+  "@id": "urn:uuid:climate-db",
+  "jgd:observes": "jgd-domain:GlobalClimate",
+  "jgd:spatialCoverage": {
+    "type": "Polygon",
+    "coordinates": [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]
+  },
+  "jgd:temporalCoverage": {
+    "start": "1980-01-01",
+    "end": "2025-01-31"
+  },
+  "jgd:knownBlindSpots": [
+    { "spatial": "southern-oceans", "reason": "sensor-limitations" }
+  ],
+  "_metadata": {
+    "version": "v2025",
+    "previousVersion": "v2020",
+    "updatedAt": "2025-01-31T12:00:00Z"
+  }
+}
+```
+
+**Recommended for**: Web applications, JSON-native stacks, flexible schemas.
+
+== Backend Comparison
+
+[cols="1,1,1,1,1,1"]
+|===
+|Backend |Core JGD |Temporal |Spatial |Graph |Recommended For
+
+|**verisimdb**
+|✓ Full
+|✓ Native (VQL)
+|✓ Indexes
+|✓ RDF
+|**Reference implementation, temporal cartography**
+
+|**RDF Triplestore**
+|✓ Full
+|⚠ Workaround (named graphs)
+|✓ GeoSPARQL
+|✓ Native
+|Static catalogs, SPARQL-heavy
+
+|**PostgreSQL**
+|✓ Full
+|✓ Temporal tables
+|✓ PostGIS
+|⚠ JSON graph
+|Enterprise, SQL infrastructure
+
+|**Neo4j**
+|✓ Core
+|⚠ Plugin
+|✓ Neo4j Spatial
+|✓ Native
+|Graph analysis, relationships
+
+|**MongoDB**
+|✓ Core
+|⚠ Change streams
+|✓ Geospatial
+|⚠ Limited
+|Web apps, JSON stacks
+|===
+
+**Legend**:
+- ✓ Native support, works well
+- ⚠ Requires workarounds or extensions
+- ✗ Not supported
+
+== Migration Paths
+
+=== Start Simple, Grow Into verisimdb
+
+**Phase 1: Prototype (PostgreSQL/MongoDB)**
+```
+Use SQL or document store for initial JGD adoption
+→ Core metadata works immediately
+→ No new infrastructure required
+→ Limitations: No temporal queries, manual versioning
+```
+
+**Phase 2: Federation (RDF Triplestore)**
+```
+Migrate to RDF for better federation support
+→ SPARQL enables complex queries
+→ Homoiconic containers natural in RDF
+→ Limitations: Still no native temporal queries
+```
+
+**Phase 3: Full Capabilities (verisimdb)**
+```
+Migrate to verisimdb for complete JGD features
+→ Temporal queries via VQL
+→ Cartographic deltas automatic
+→ Optimal exploration guidance
+```
+
+=== Polyglot Persistence
+
+**Run multiple backends simultaneously**:
+
+```
+┌─────────────────────────────────────────┐
+│ verisimdb (cartographic index/atlas)   │
+│ - Indexes all D_p instances             │
+│ - Temporal queries, deltas              │
+└──────────────┬──────────────────────────┘
+               │
+     ┌─────────┴─────────┐
+     ▼                   ▼
+┌──────────┐      ┌──────────────┐
+│PostgreSQL│      │   Neo4j      │
+│Climate   │      │  Economic    │
+│data      │      │  network     │
+└──────────┘      └──────────────┘
+```
+
+**verisimdb federates queries across heterogeneous backends.**
+
+== Implementing a New Backend
+
+=== Checklist
+
+To implement JGD on a new backend:
+
+1. **Core types**: Map jgd:D_p, jgd:D_n to backend's type system
+2. **Storage**: Store JGD metadata (coverage, blind spots, etc.)
+3. **Query interface**: Provide query API (SPARQL, SQL, or custom)
+4. **Homoiconic support**: Container can describe itself in JGD
+5. **Federation**: Can reference other D_p instances
+6. **Documentation**: Explain backend-specific capabilities/limitations
+
+**Optional**:
+7. **Temporal support**: Version D_p instances over time
+8. **Spatial indexes**: Optimize coverage queries
+9. **Custom extensions**: Backend-specific JGD extensions
+
+=== Example: Adding Redis Support
+
+**Use case**: Fast in-memory catalog for D_p discovery.
+
+```redis
+# D_p as hash
+HSET climate-db:metadata
+  type "jgd:D_p"
+  observes "global-climate"
+  spatialCoverage "northern-hemisphere"
+  temporalCoverage "1980-2025"
+
+# Spatial index (geohash)
+GEOADD d_p:spatial 0.0 51.5 climate-db  # London center
+
+# Temporal index (sorted set)
+ZADD d_p:temporal:start 315532800 climate-db  # 1980-01-01 as Unix timestamp
+ZADD d_p:temporal:end 1738281600 climate-db    # 2025-01-31
+
+# Query: Find D_p covering 2020
+ZRANGEBYSCORE d_p:temporal:start -inf 1577836800
+ZRANGEBYSCORE d_p:temporal:end 1577836800 +inf
+```
+
+**Capabilities**:
+- ✓ Fast in-memory queries
+- ✓ Spatial/temporal indexes
+- ⚠ No SPARQL (custom query layer needed)
+- ⚠ No versioning (Redis is ephemeral)
+
+**Recommended for**: High-performance catalog, caching layer.
+
+== Best Practices
+
+=== Backend Selection
+
+**Choose based on**:
+
+1. **Existing infrastructure** - Use what you already have
+2. **Query complexity** - Graph queries → Neo4j, SPARQL → RDF, SQL → PostgreSQL
+3. **Temporal needs** - Time-travel required → verisimdb, snapshots OK → anything
+4. **Scale** - Millions of D_p → distributed (ArangoDB, verisimdb federation)
+5. **Team expertise** - Use what your team knows
+
+**Start simple, migrate as needed.**
+
+=== Hybrid Approaches
+
+**Use multiple backends for different purposes**:
+
+- **verisimdb**: Cartographic index (atlas)
+- **PostgreSQL**: Large-scale data storage
+- **Redis**: Fast query cache
+- **Elasticsearch**: Full-text search of D_p metadata
+
+**JGD federation allows seamless integration.**
+
+=== Future-Proofing
+
+**Design for migration**:
+
+1. **Use core JGD only** - Avoid backend-specific extensions initially
+2. **Abstract storage layer** - Hide backend details behind API
+3. **Test on multiple backends** - Ensure portability
+4. **Document dependencies** - Note which features require specific backends
+
+## Conclusion
+
+**JGD is storage-independent by design**, enabling adoption on any structured storage backend. **verisimdb is the canonical implementation** that fully realizes JGD's temporal cartography vision.
+
+**Recommendation**:
+- **Start** with existing infrastructure (SQL, RDF, Graph)
+- **Adopt** core JGD metadata immediately
+- **Migrate** to verisimdb when temporal queries become essential
+
+The grammar works everywhere. The journey works best with verisimdb.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later
