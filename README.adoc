@@ -1,9 +1,10 @@
-= Metadata Grammar
+= Journey Grammar for Databases (JGD)
 :toc:
 :license: PMPL-1.0-or-later
 
 image:https://img.shields.io/badge/license-PMPL--1.0--or--later-indigo[License]
-image:https://img.shields.io/badge/status-proof--of--concept-yellow[Status]
+image:https://img.shields.io/badge/status-position--paper--ready-green[Status]
+image:https://img.shields.io/badge/arXiv-ready--for--submission-blue[arXiv]
 
 **Cartographic infrastructure for mapping reality through data**
 
@@ -14,106 +15,239 @@ Stop obsessing over the black box. Our databases are white—we built them, we c
 The blackness is outside. The unexplored territory. The darkness beyond our maps.
 
 We are cartographers stepping into darkness, progressively mapping reality.
+
+*The map emerges from the journey, not before it.*
 ____
 
 == The Paradigm Shift
 
 For two decades, we've worried about "black box" AI and opaque systems. **We've been looking in the wrong direction.**
 
+**The Schrödinger Shift**:
+- **Old question**: "Is the cat dead or alive?" (What's inside THIS box?)
+- **New question**: "Are there cats beyond?" (What exists in unexplored reality?)
+
 **The inversion**:
-- Our boxes are **transparent** (we built the databases, models, systems)
-- Reality is **dark** (unmeasured domains, blind spots, unknown unknowns)
+- Our boxes are **white** (D_p—phenomenal databases we built and understand)
+- Reality is **dark** (D_n—noumenal territory beyond our measurements)
 - The question isn't "How does this model work?" but **"What haven't we measured?"**
-- Not "Is the cat dead or alive?" but **"Are there cats beyond?"**
+- Focus shifts from interpretability (opening boxes) to **cartography** (mapping darkness)
 
-**metadata-grammar** is the cartographic standard for exploring this darkness:
+**Journey Grammar for Databases (JGD)** is the formal infrastructure for this paradigm:
 
-- Catalog the **white box** (phenomenal databases we've built)
-- Mark the **edges** (coverage boundaries, blind spots)
-- Acknowledge the **darkness** (epistemic humility about the unknown)
+- Catalog the **white box** (Zone 1: ~15% coverage—D_p instances we've created)
+- Mark **known blind spots** (Zone 2: ~25%—gaps we've identified)
+- Acknowledge **unknown unknowns** (Zone 3: ~60%—unconceived domains)
+- Track how **maps emerge from journeys** (temporal evolution of knowledge)
 - Guide **exploration** (where to step into darkness next)
 
-**See link:PHILOSOPHY.adoc[PHILOSOPHY.adoc] for the complete framework.**
+**See link:PHILOSOPHY.adoc[PHILOSOPHY.adoc] for the complete philosophical framework.**
 
-== What is Metadata Grammar?
+**See link:ARXIV-POSITION-PAPER.adoc[ARXIV-POSITION-PAPER.adoc] for the academic paper (ready for arXiv).**
 
-Metadata Grammar goes beyond vocabulary to provide a **compositional grammar** for dataset metadata:
+== What is Journey Grammar for Databases?
+
+**JGD is a grammar, not just a vocabulary.** It goes beyond VoID/Dublin Core/DCAT to provide compositional infrastructure:
 
 - **Vocabulary**: Terms and definitions (what VoID/Dublin Core provide)
-- **Grammar**: Vocabulary + syntax + composition rules + validation + formal semantics + cartographic guidance
+- **Grammar**: Vocabulary + syntax (EBNF) + semantics (Idris2) + composition rules + transformations (category theory) + cartographic guidance
 
 === Key Features
 
-✓ **Unified framework** - Integrates VoID (technical), Dublin Core (descriptive), DCAT (catalog)
-✓ **Formal semantics** - Idris2 dependent types prove metadata properties
-✓ **Modern concerns** - Data ethics, AI/ML metadata, sustainability, privacy
-✓ **verisimdb integration** - Temporal versioning, immutable history, validation tracking
-✓ **Multi-format** - RDF/Turtle, JSON-LD, JSON Schema
-✓ **Legacy compatibility** - Automatic crosswalks to VoID/DC/DCAT
+✓ **D_p/D_n classification** - Phenomenal databases (observations) vs noumenal reality (territory)
+✓ **Three-zone model** - White box (15%), known darkness (25%), unknown darkness (60%)
+✓ **Homoiconic containers** - Databases describe themselves using same grammar as contents
+✓ **Metamorphic transformations** - Provable representation changes (RDF ↔ JSON-LD ↔ Graph ↔ SQL)
+✓ **Temporal cartography** - Maps emerge from journeys, tracked via verisimdb
+✓ **Formal semantics** - Idris2 dependent types prove metadata correctness
+✓ **Epistemic humility** - Machine-readable blind spots and unknown unknowns
+✓ **Atlas-based federation** - verisimdb coordinates distributed D_p instances
+✓ **Multi-format** - RDF/Turtle, JSON-LD, SQL accessibility layer (JGD-SQL)
+✓ **Legacy compatibility** - Crosswalks to VoID/Dublin Core/DCAT
 
 == Quick Start
 
-See link:CONCEPT.adoc[CONCEPT.adoc] for the full specification.
+See link:CONCEPT.adoc[CONCEPT.adoc] for conceptual overview and link:CARTOGRAPHY.adoc[CARTOGRAPHY.adoc] for practical guide.
 
-=== Example
+=== Example: Phenomenal Database with Coverage & Blind Spots
 
 [source,turtle]
 ----
-@prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
+@prefix jgd: <https://hyperpolymath.org/ns/jgd#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
 
-:MyDataset a mg:Dataset ;
-    mg:title "Example Dataset" ;
-    mg:creator :JonathanJewell ;
-    mg:tripleCount 1000000 ;
-    mg:sparqlEndpoint <https://example.org/sparql> ;
-    mg:validates-against :CoreShapes ;
-    mg:validation-status mg:Valid .
+:ClimateDB a jgd:D_p ;
+    jgd:observes jgd-domain:GlobalClimate ;
+    jgd:title "Global Climate Observations 1980-2025" ;
+    jgd:creator :NOAA ;
+
+    # Spatiotemporal coverage (the white box for this D_p)
+    jgd:spatialCoverage :NorthernHemisphere ;
+    jgd:temporalCoverage [
+        jgd:start "1980-01-01"^^xsd:date ;
+        jgd:end "2025-01-31"^^xsd:date
+    ] ;
+    jgd:resolution "1km grid" ;
+
+    # Known blind spots (Zone 2)
+    jgd:knownBlindSpots [
+        jgd:spatial :SouthernOceans ;
+        jgd:temporal "pre-1950" ;
+        jgd:reason "Limited sensor deployment before satellite era"
+    ] ;
+
+    # Epistemic humility
+    jgd:uncertainty jgd:Medium ;
+
+    # Versioning (temporal cartography)
+    jgd:versionHistory :ClimateDB-History ;
+    jgd:currentVersion :ClimateDB_v2025 .
+----
+
+=== Example: SQL Accessibility Layer (JGD-SQL)
+
+[source,sql]
+----
+-- Create phenomenal database metadata
+CREATE D_P climate_db (
+    observes = 'global-climate',
+    spatial_coverage = ST_GeomFromText('POLYGON(...)', 4326),
+    temporal_coverage = TSTZRANGE('1980-01-01', '2025-01-31'),
+    resolution = '1km grid'
+);
+
+-- Mark blind spots
+INSERT INTO jgd.blind_spots (d_p_id, spatial, temporal, reason) VALUES
+    ('climate_db', 'southern-oceans', 'pre-1950', 'Limited sensor deployment');
+
+-- Query: Find D_p covering Europe in 2020-2025
+SELECT d_p.name, d_p.spatial_coverage
+FROM jgd.d_p
+WHERE ST_Intersects(d_p.spatial_coverage, ST_MakeEnvelope(...))
+  AND d_p.temporal_coverage && TSTZRANGE('2020-01-01', '2025-12-31');
 ----
 
 == Architecture
 
+See link:ARCHITECTURE.adoc[ARCHITECTURE.adoc] for complete specification.
+
 [source]
 ----
-Layer 1: Core Metadata (descriptive, technical, administrative)
-Layer 2: Domain Extensions (scientific, cultural, geospatial, AI/ML, sustainability)
-Layer 3: Interoperability (Schema.org, DCAT-AP, Bioschemas, legacy crosswalks)
+Layer 1: Idris2 Formal Specification
+    - Dependent types for D_p/D_n
+    - Proofs of metadata correctness
+    - Category theory for metamorphic transforms
+    - Generates C ABI headers
+
+Layer 2: Zig FFI Implementation
+    - Memory-safe C ABI
+    - Cross-platform compatibility
+    - Zero runtime dependencies
+    - SQL parser (JGD-SQL → SPARQL compiler)
+
+Layer 3: Language Bindings
+    - Rust: Systems tools and CLI
+    - Julia: Batch processing and data science
+    - ReScript: Web UI and visualization
+    - Python: ML/AI ecosystem integration
+
+Layer 4: Applications
+    - CLI tools (create, validate, query, transform)
+    - Web UI (visual metadata creation)
+    - verisimdb integration (atlas coordination)
+    - SPARQL/VQL endpoint (temporal queries)
 ----
 
-== Integration with verisimdb
+== verisimdb: The Cartographic Atlas
 
-**verisimdb** provides temporal versioning for RDF graphs. Metadata Grammar integrates:
+See link:BACKENDS.adoc[BACKENDS.adoc] for storage independence details.
 
-- Dataset metadata stored in verisimdb
-- Provenance tracked via versioning
-- Grammar rules enforced via SHACL
-- Validation history preserved
+**verisimdb is the canonical backend** providing full temporal cartography:
 
-== Implementation Roadmap
+**Unique capabilities**:
+- **Temporal versioning**: Git-like semantics for D_p evolution
+- **Time-travel queries**: "What coverage did we have on 2020-01-01?"
+- **Cartographic deltas**: Track blind spot filling, uncertainty reduction
+- **VQL extensions**: SPARQL + temporal operators (`AT TIME`, `DELTA`)
+- **Homoiconic**: verisimdb is itself a D_p describing database evolution
 
-**Phase 1: Core Specification** (current)
-- Idris2 formal grammar
-- SHACL validation shapes
-- JSON-LD context
-- OWL ontology
+**Other backends supported** (see BACKENDS.adoc):
+- RDF triplestores (Jena, Virtuoso, Blazegraph)
+- SQL databases (PostgreSQL, MySQL)
+- Property graphs (Neo4j, ArangoDB)
+- Document stores (MongoDB, CouchDB)
 
-**Phase 2: Tooling**
-- Zig FFI validation library
-- ReScript web UI
-- Julia conversion scripts
-- Rust CLI
+**JGD core is storage-independent.** verisimdb provides optimal temporal features.
 
-**Phase 3: Integration**
-- verisimdb backend
-- SPARQL endpoint
-- CI/CD validation
-- Documentation site
+== Documentation
 
-== Related Projects
+**Philosophical Framework**:
+- link:PHILOSOPHY.adoc[PHILOSOPHY.adoc] - White box in darkness paradigm, three-zone model
+- link:VISION-BLINDSPOT.adoc[VISION-BLINDSPOT.adoc] - Nature paper analogy, cartographic framing
 
-- **verisimdb**: Versioned semantic database (temporal RDF)
-- **VoID**: Vocabulary of Interlinked Datasets
-- **Dublin Core**: Resource metadata standard
-- **DCAT**: Data Catalog Vocabulary
+**Technical Specifications**:
+- link:CONCEPT.adoc[CONCEPT.adoc] - Core concepts and overview
+- link:ARCHITECTURE.adoc[ARCHITECTURE.adoc] - 4-layer architecture (Idris2 → Zig → bindings → apps)
+- link:BACKENDS.adoc[BACKENDS.adoc] - Storage independence, verisimdb vs alternatives
+- link:JGD-SQL.adoc[JGD-SQL.adoc] - SQL accessibility layer specification
+
+**Practical Guides**:
+- link:CARTOGRAPHY.adoc[CARTOGRAPHY.adoc] - How to create D_p instances, mark blind spots
+- link:ROADMAP.adoc[ROADMAP.adoc] - 6-phase development plan through Q2 2027
+
+**Academic Publication**:
+- link:ARXIV-POSITION-PAPER.adoc[ARXIV-POSITION-PAPER.adoc] - Complete arXiv position paper (ready for submission)
+- link:ARXIV-PAPER-DISCUSSION.adoc[ARXIV-PAPER-DISCUSSION.adoc] - Timing analysis and structure
+- link:ARXIV-RELATED-WORK.adoc[ARXIV-RELATED-WORK.adoc] - Related work section (cartography, philosophy, databases)
+
+**Project Metadata** (.machine_readable/6scm/):
+- link:STATE.scm[STATE.scm] - Current project state, progress, tasks
+- link:ECOSYSTEM.scm[ECOSYSTEM.scm] - Relationships to other projects
+- link:META.scm[META.scm] - Architectural decisions, philosophy, governance
+
+== Roadmap
+
+See link:ROADMAP.adoc[ROADMAP.adoc] for complete plan.
+
+**Phase 1: Formal Specification** (Q1 2026) ✓ In Progress
+- EBNF grammar, Idris2 types, SHACL shapes, JSON-LD context, OWL ontology
+
+**Phase 2: Homoiconic Container Model** (Q2 2026)
+- Self-describing storage containers, reflection APIs
+
+**Phase 3: Metamorphic Library** (Q3 2026)
+- Transformation catalog, Idris2 proofs, round-trip validation
+
+**Phase 4: Integration Ecosystem** (Q4 2026)
+- verisimdb atlas, SPARQL/VQL endpoint, D_p discovery tools
+
+**Phase 5: Tooling & Libraries** (Q1 2027)
+- Zig FFI, Rust CLI, ReScript web UI, Julia batch scripts, Python/JS bindings
+
+**Phase 6: Documentation & Community** (Q2 2027)
+- Specification site, tutorials, academic paper (ISWC 2027), community forum
+
+**Success metrics by 2027**:
+- >1000 D_p instances created
+- >100,000 databases indexed in verisimdb atlas
+- White box expansion: 15% → 17% coverage
+- >10,000 Zone 2 blind spots cataloged
+
+== Successor to VoID, Dublin Core, DCAT
+
+**What exists**:
+- **VoID** (2011): Vocabulary for linked datasets (technical metadata)
+- **Dublin Core** (1998): Resource description (15 core elements)
+- **DCAT** (2014): Data catalog vocabulary (government data)
+
+**What's missing** (what JGD adds):
+- ❌ No compositional grammar (just vocabularies)
+- ❌ No temporal evolution tracking
+- ❌ No cartographic semantics (coverage, blind spots, epistemic humility)
+- ❌ No homoiconic containers
+- ❌ No metamorphic transformations
+- ❌ No atlas-based federation coordination
+- ❌ No paradigm shift (they assume completeness, not exploration)
 
 == License
 
