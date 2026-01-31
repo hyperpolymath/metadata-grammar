@@ -1,0 +1,1383 @@
+= Journey Grammar for Databases: System Architecture
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:toclevels: 3
+:license: PMPL-1.0-or-later
+
+== Overview
+
+Journey Grammar for Databases (JGD) uses a **layered architecture** with formal verification at its core:
+
+```
+┌──────────────────────────────────────────────────┐
+│ LAYER 4: Applications & Tools                   │
+│ - Rust CLI (jgd-sql)                            │
+│ - ReScript Web UI                               │
+│ - Julia batch scripts                           │
+│ - Python/JavaScript libraries                   │
+└────────────────┬─────────────────────────────────┘
+                 │ (calls via FFI)
+                 ▼
+┌──────────────────────────────────────────────────┐
+│ LAYER 3: Language Bindings                      │
+│ - Rust bindings (safe wrappers)                 │
+│ - Julia bindings (ccall)                        │
+│ - ReScript bindings (Deno FFI)                  │
+│ - Python bindings (ctypes)                      │
+└────────────────┬─────────────────────────────────┘
+                 │ (uses C ABI)
+                 ▼
+┌──────────────────────────────────────────────────┐
+│ LAYER 2: Zig FFI Implementation                 │
+│ - C ABI implementation                          │
+│ - SQL parser                                    │
+│ - SPARQL compiler                               │
+│ - RDF serializer                                │
+│ - Memory management                             │
+└────────────────┬─────────────────────────────────┘
+                 │ (implements)
+                 ▼
+┌──────────────────────────────────────────────────┐
+│ LAYER 1: Idris2 Formal Specification + ABI      │
+│ - Dependent types (D_p, D_n, queries)           │
+│ - Correctness proofs                            │
+│ - Generates C ABI headers                       │
+└──────────────────────────────────────────────────┘
+```
+
+**Key principle**: **Formal specification → C ABI → Universal bindings**
+
+== Layer 1: Idris2 Formal Specification
+
+=== Purpose
+
+**Define WHAT the system does** with mathematical rigor:
+
+- Type definitions for D_p, D_n, queries, transformations
+- Semantic specifications (what queries mean)
+- Correctness proofs (compilation preserves semantics)
+- Generate C ABI headers (interface for FFI)
+
+=== Directory Structure
+
+```
+spec/idris2/
+├── JGD/
+│   ├── Types.idr              # Core type definitions
+│   ├── SQL/
+│   │   ├── Parser.idr         # SQL syntax specification
+│   │   ├── AST.idr            # Abstract Syntax Tree types
+│   │   └── Semantics.idr      # What SQL queries mean
+│   ├── SPARQL/
+│   │   ├── AST.idr            # SPARQL syntax tree
+│   │   └── Semantics.idr      # SPARQL semantics
+│   ├── Compiler.idr           # SQL → SPARQL compiler spec
+│   ├── Proofs.idr             # Correctness proofs
+│   └── ABI.idr                # C ABI generation
+├── generated/
+│   └── jgd_abi.h              # Generated C headers
+└── jgd.ipkg                   # Idris package file
+```
+
+=== Example: Type Definitions
+
+**JGD/Types.idr**:
+```idris
+module JGD.Types
+
+import Data.String
+import Data.List
+
+-- Phenomenal database (D_p)
+public export
+record D_p where
+  constructor MkD_p
+  name : String
+  {auto 0 nameNonEmpty : So (length name > 0)}
+  observes : Domain
+  spatialCoverage : SpatialCoverage
+  temporalCoverage : TemporalCoverage
+  {auto 0 validCoverage : CoverageValid spatialCoverage temporalCoverage}
+
+-- Domain being observed
+public export
+data Domain = MkDomain String
+
+-- Spatial coverage
+public export
+data SpatialCoverage
+  = Point Double Double
+  | Polygon (List (Double, Double))
+  | Region String
+
+-- Temporal coverage
+public export
+record TemporalCoverage where
+  constructor MkTemporal
+  start : ISO8601Date
+  end : ISO8601Date
+  {auto 0 validRange : LTE start end}
+
+-- Coverage validity proof
+public export
+CoverageValid : SpatialCoverage -> TemporalCoverage -> Type
+CoverageValid spatial temporal =
+  (SpatialWellFormed spatial, TemporalWellFormed temporal)
+```
+
+=== Example: Compiler Specification
+
+**JGD/Compiler.idr**:
+```idris
+module JGD.Compiler
+
+import JGD.SQL.AST
+import JGD.SPARQL.AST
+import JGD.SQL.Semantics
+import JGD.SPARQL.Semantics
+
+-- The compiler
+public export
+compile : SQLQuery -> SPARQLQuery
+
+-- CRITICAL: Proof that compilation preserves semantics
+public export
+compile_correct : (q : SQLQuery) ->
+  sqlSemantics q = sparqlSemantics (compile q)
+
+-- Implementation (simplified)
+compile (SelectDp fields predicate) =
+  MkSPARQL
+    (SelectClause (map sqlFieldToSparqlVar fields))
+    (WhereClause (predicateToGraphPattern predicate))
+
+-- Proof implementation (sketch)
+compile_correct (SelectDp fields predicate) =
+  -- Proof that SELECT in SQL has same semantics as SELECT in SPARQL
+  -- when operating on D_p instances
+  ?proof_select_preserves_semantics
+```
+
+=== Example: C ABI Generation
+
+**JGD/ABI.idr**:
+```idris
+module JGD.ABI
+
+import JGD.Types
+import JGD.Compiler
+
+-- C ABI type (opaque pointer)
+public export
+data JGD_SQLQuery : Type where
+  MkSQLQueryHandle : Ptr -> JGD_SQLQuery
+
+public export
+data JGD_SPARQLQuery : Type where
+  MkSPARQLQueryHandle : Ptr -> JGD_SPARQLQuery
+
+-- C ABI functions
+public export
+%foreign "C:jgd_parse_sql, libjgd"
+jgd_parse_sql : String -> PrimIO (Ptr JGD_SQLQuery)
+
+public export
+%foreign "C:jgd_compile, libjgd"
+jgd_compile : Ptr JGD_SQLQuery -> PrimIO (Ptr JGD_SPARQLQuery)
+
+public export
+%foreign "C:jgd_sparql_to_string, libjgd"
+jgd_sparql_to_string : Ptr JGD_SPARQLQuery -> PrimIO String
+
+-- Generate C header
+%foreign "support:generate_c_header"
+generateCHeader : IO ()
+```
+
+**Generated output** (`generated/jgd_abi.h`):
+```c
+/* Auto-generated from JGD/ABI.idr */
+#ifndef JGD_ABI_H
+#define JGD_ABI_H
+
+#include <stddef.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Opaque handles */
+typedef struct JGD_SQLQuery JGD_SQLQuery;
+typedef struct JGD_SPARQLQuery JGD_SPARQLQuery;
+typedef struct JGD_D_p JGD_D_p;
+
+/* SQL Parser */
+JGD_SQLQuery* jgd_parse_sql(const char* sql);
+
+/* Compiler */
+JGD_SPARQLQuery* jgd_compile(JGD_SQLQuery* query);
+
+/* Serialization */
+const char* jgd_sparql_to_string(JGD_SPARQLQuery* sparql);
+
+/* D_p operations */
+JGD_D_p* jgd_create_d_p(const char* name, const char* observes);
+int jgd_set_spatial_coverage(JGD_D_p* dp, double* points, size_t num_points);
+int jgd_set_temporal_coverage(JGD_D_p* dp, const char* start, const char* end);
+
+/* Memory management */
+void jgd_free_query(JGD_SQLQuery* query);
+void jgd_free_sparql(JGD_SPARQLQuery* sparql);
+void jgd_free_d_p(JGD_D_p* dp);
+
+/* Error handling */
+const char* jgd_last_error(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* JGD_ABI_H */
+```
+
+=== Building
+
+```bash
+# Install Idris2
+$ git clone https://github.com/idris-lang/Idris2
+$ cd Idris2 && make bootstrap && make install
+
+# Build JGD specification
+$ cd spec/idris2
+$ idris2 --build jgd.ipkg
+
+# Generate C ABI headers
+$ idris2 --exec generateCHeader JGD.ABI
+# Output: generated/jgd_abi.h
+```
+
+== Layer 2: Zig FFI Implementation
+
+=== Purpose
+
+**Implement HOW the system works** in a memory-safe, performant way:
+
+- Implement C ABI defined by Idris2
+- SQL parser (lexer + parser + AST builder)
+- SPARQL compiler (AST → SPARQL text)
+- RDF serializer (Turtle, JSON-LD, N-Triples)
+- Memory management (allocate, free, no leaks)
+
+=== Directory Structure
+
+```
+ffi/zig/
+├── build.zig                  # Build configuration
+├── src/
+│   ├── jgd.zig                # Main entry point
+│   ├── parser/
+│   │   ├── lexer.zig          # SQL tokenizer
+│   │   ├── parser.zig         # SQL parser
+│   │   └── ast.zig            # AST definitions
+│   ├── compiler/
+│   │   ├── sparql.zig         # SPARQL generator
+│   │   └── optimizer.zig      # Query optimization
+│   ├── serializer/
+│   │   ├── turtle.zig         # Turtle serializer
+│   │   ├── jsonld.zig         # JSON-LD serializer
+│   │   └── ntriples.zig       # N-Triples serializer
+│   ├── abi.zig                # C ABI exports
+│   └── types.zig              # Core data structures
+├── test/
+│   ├── parser_test.zig
+│   ├── compiler_test.zig
+│   └── integration_test.zig
+└── include/
+    └── jgd_abi.h              # Symlink to spec/idris2/generated/
+```
+
+=== Example: SQL Parser
+
+**src/parser/lexer.zig**:
+```zig
+const std = @import("std");
+
+pub const TokenType = enum {
+    // Keywords
+    CREATE, D_P, SELECT, FROM, WHERE, INSERT, UPDATE, DELETE,
+
+    // Identifiers and literals
+    IDENTIFIER, STRING, NUMBER,
+
+    // Operators
+    EQUALS, LPAREN, RPAREN, COMMA, SEMICOLON,
+
+    // Special
+    EOF, ERROR,
+};
+
+pub const Token = struct {
+    type: TokenType,
+    lexeme: []const u8,
+    line: usize,
+    column: usize,
+};
+
+pub const Lexer = struct {
+    source: []const u8,
+    current: usize = 0,
+    line: usize = 1,
+    column: usize = 1,
+
+    pub fn init(source: []const u8) Lexer {
+        return .{ .source = source };
+    }
+
+    pub fn nextToken(self: *Lexer) !Token {
+        self.skipWhitespace();
+
+        if (self.isAtEnd()) {
+            return Token{ .type = .EOF, .lexeme = "", .line = self.line, .column = self.column };
+        }
+
+        const c = self.peek();
+
+        // Keywords and identifiers
+        if (std.ascii.isAlphabetic(c) or c == '_') {
+            return self.identifier();
+        }
+
+        // Numbers
+        if (std.ascii.isDigit(c)) {
+            return self.number();
+        }
+
+        // String literals
+        if (c == '\'') {
+            return self.string();
+        }
+
+        // Single-character tokens
+        return switch (c) {
+            '=' => self.makeToken(.EQUALS),
+            '(' => self.makeToken(.LPAREN),
+            ')' => self.makeToken(.RPAREN),
+            ',' => self.makeToken(.COMMA),
+            ';' => self.makeToken(.SEMICOLON),
+            else => Token{ .type = .ERROR, .lexeme = &[_]u8{c}, .line = self.line, .column = self.column },
+        };
+    }
+
+    fn identifier(self: *Lexer) Token {
+        const start = self.current;
+        while (!self.isAtEnd() and (std.ascii.isAlphanumeric(self.peek()) or self.peek() == '_')) {
+            _ = self.advance();
+        }
+
+        const lexeme = self.source[start..self.current];
+        const token_type = self.keywordType(lexeme);
+
+        return Token{ .type = token_type, .lexeme = lexeme, .line = self.line, .column = self.column };
+    }
+
+    fn keywordType(self: *Lexer, text: []const u8) TokenType {
+        _ = self;
+        if (std.mem.eql(u8, text, "CREATE")) return .CREATE;
+        if (std.mem.eql(u8, text, "D_P")) return .D_P;
+        if (std.mem.eql(u8, text, "SELECT")) return .SELECT;
+        if (std.mem.eql(u8, text, "FROM")) return .FROM;
+        if (std.mem.eql(u8, text, "WHERE")) return .WHERE;
+        return .IDENTIFIER;
+    }
+
+    // ... more lexer methods
+};
+```
+
+**src/parser/parser.zig**:
+```zig
+const std = @import("std");
+const Lexer = @import("lexer.zig").Lexer;
+const Token = @import("lexer.zig").Token;
+const TokenType = @import("lexer.zig").TokenType;
+const AST = @import("ast.zig");
+
+pub const Parser = struct {
+    lexer: *Lexer,
+    current: Token,
+    allocator: std.mem.Allocator,
+
+    pub fn init(allocator: std.mem.Allocator, lexer: *Lexer) !Parser {
+        var parser = Parser{
+            .lexer = lexer,
+            .current = undefined,
+            .allocator = allocator,
+        };
+        parser.current = try lexer.nextToken();
+        return parser;
+    }
+
+    pub fn parse(self: *Parser) !*AST.SQLQuery {
+        // Dispatch based on first keyword
+        return switch (self.current.type) {
+            .CREATE => self.parseCreate(),
+            .SELECT => self.parseSelect(),
+            .INSERT => self.parseInsert(),
+            .UPDATE => self.parseUpdate(),
+            .DELETE => self.parseDelete(),
+            else => error.UnexpectedToken,
+        };
+    }
+
+    fn parseCreate(self: *Parser) !*AST.SQLQuery {
+        try self.consume(.CREATE);
+        try self.consume(.D_P);
+
+        const name = try self.consumeIdentifier();
+        try self.consume(.LPAREN);
+
+        var properties = std.ArrayList(AST.Property).init(self.allocator);
+
+        while (self.current.type != .RPAREN) {
+            const prop = try self.parseProperty();
+            try properties.append(prop);
+
+            if (self.current.type == .COMMA) {
+                _ = try self.advance();
+            } else {
+                break;
+            }
+        }
+
+        try self.consume(.RPAREN);
+
+        const query = try self.allocator.create(AST.SQLQuery);
+        query.* = .{ .CreateDp = .{ .name = name, .properties = properties.toOwnedSlice() } };
+        return query;
+    }
+
+    fn parseSelect(self: *Parser) !*AST.SQLQuery {
+        try self.consume(.SELECT);
+
+        var fields = std.ArrayList([]const u8).init(self.allocator);
+
+        // Parse field list
+        while (true) {
+            const field = try self.consumeIdentifier();
+            try fields.append(field);
+
+            if (self.current.type == .COMMA) {
+                _ = try self.advance();
+            } else {
+                break;
+            }
+        }
+
+        try self.consume(.FROM);
+        const table = try self.consumeIdentifier();
+
+        // Optional WHERE clause
+        var predicate: ?AST.Predicate = null;
+        if (self.current.type == .WHERE) {
+            _ = try self.advance();
+            predicate = try self.parsePredicate();
+        }
+
+        const query = try self.allocator.create(AST.SQLQuery);
+        query.* = .{ .SelectDp = .{
+            .fields = fields.toOwnedSlice(),
+            .table = table,
+            .predicate = predicate,
+        } };
+        return query;
+    }
+
+    // ... more parser methods
+};
+```
+
+=== Example: SPARQL Compiler
+
+**src/compiler/sparql.zig**:
+```zig
+const std = @import("std");
+const AST = @import("../parser/ast.zig");
+
+pub const SPARQLCompiler = struct {
+    allocator: std.mem.Allocator,
+    buffer: std.ArrayList(u8),
+
+    pub fn init(allocator: std.mem.Allocator) SPARQLCompiler {
+        return .{
+            .allocator = allocator,
+            .buffer = std.ArrayList(u8).init(allocator),
+        };
+    }
+
+    pub fn compile(self: *SPARQLCompiler, query: *AST.SQLQuery) ![]u8 {
+        switch (query.*) {
+            .SelectDp => |select| try self.compileSelect(select),
+            .CreateDp => |create| try self.compileCreate(create),
+            .InsertDp => |insert| try self.compileInsert(insert),
+            .UpdateDp => |update| try self.compileUpdate(update),
+            .DeleteDp => |delete| try self.compileDelete(delete),
+        }
+
+        return self.buffer.toOwnedSlice();
+    }
+
+    fn compileSelect(self: *SPARQLCompiler, select: AST.SelectDp) !void {
+        // SELECT clause
+        try self.buffer.appendSlice("SELECT ");
+        for (select.fields) |field| {
+            try self.buffer.append('?');
+            try self.buffer.appendSlice(field);
+            try self.buffer.append(' ');
+        }
+
+        // WHERE clause
+        try self.buffer.appendSlice("\nWHERE {\n");
+        try self.buffer.appendSlice("  ?db a jgd:D_p .\n");
+
+        // Map fields to SPARQL properties
+        for (select.fields) |field| {
+            try self.buffer.appendSlice("  ?db jgd:");
+            try self.buffer.appendSlice(field);
+            try self.buffer.append(' ');
+            try self.buffer.append('?');
+            try self.buffer.appendSlice(field);
+            try self.buffer.appendSlice(" .\n");
+        }
+
+        // Predicate
+        if (select.predicate) |pred| {
+            try self.compilePredicate(pred);
+        }
+
+        try self.buffer.appendSlice("}");
+    }
+
+    fn compileCreate(self: *SPARQLCompiler, create: AST.CreateDp) !void {
+        try self.buffer.appendSlice("INSERT DATA {\n");
+        try self.buffer.append(':');
+        try self.buffer.appendSlice(create.name);
+        try self.buffer.appendSlice(" a jgd:D_p");
+
+        for (create.properties) |prop| {
+            try self.buffer.appendSlice(" ;\n  jgd:");
+            try self.buffer.appendSlice(prop.name);
+            try self.buffer.append(' ');
+            try self.compileValue(prop.value);
+        }
+
+        try self.buffer.appendSlice(" .\n}");
+    }
+
+    fn compilePredicate(self: *SPARQLCompiler, pred: AST.Predicate) !void {
+        try self.buffer.appendSlice("  FILTER(?");
+        try self.buffer.appendSlice(pred.field);
+
+        switch (pred.operator) {
+            .Equals => try self.buffer.appendSlice(" = "),
+            .NotEquals => try self.buffer.appendSlice(" != "),
+            .LessThan => try self.buffer.appendSlice(" < "),
+            .GreaterThan => try self.buffer.appendSlice(" > "),
+        }
+
+        try self.compileValue(pred.value);
+        try self.buffer.appendSlice(")\n");
+    }
+
+    fn compileValue(self: *SPARQLCompiler, value: AST.Value) !void {
+        switch (value) {
+            .String => |s| {
+                try self.buffer.append('"');
+                try self.buffer.appendSlice(s);
+                try self.buffer.append('"');
+            },
+            .Number => |n| {
+                const str = try std.fmt.allocPrint(self.allocator, "{d}", .{n});
+                defer self.allocator.free(str);
+                try self.buffer.appendSlice(str);
+            },
+            .Identifier => |id| {
+                try self.buffer.appendSlice("jgd:");
+                try self.buffer.appendSlice(id);
+            },
+        }
+    }
+};
+```
+
+=== Example: C ABI Implementation
+
+**src/abi.zig**:
+```zig
+const std = @import("std");
+const Parser = @import("parser/parser.zig").Parser;
+const Lexer = @import("parser/lexer.zig").Lexer;
+const SPARQLCompiler = @import("compiler/sparql.zig").SPARQLCompiler;
+const AST = @import("parser/ast.zig");
+
+const allocator = std.heap.c_allocator;
+var last_error: ?[]const u8 = null;
+
+// Opaque handles (match Idris2 ABI)
+pub const JGD_SQLQuery = AST.SQLQuery;
+pub const JGD_SPARQLQuery = struct {
+    text: []u8,
+};
+
+/// Parse SQL string to AST
+export fn jgd_parse_sql(sql: [*:0]const u8) ?*JGD_SQLQuery {
+    const sql_slice = std.mem.span(sql);
+
+    var lexer = Lexer.init(sql_slice);
+    var parser = Parser.init(allocator, &lexer) catch {
+        last_error = "Failed to initialize parser";
+        return null;
+    };
+
+    const query = parser.parse() catch |err| {
+        last_error = @errorName(err);
+        return null;
+    };
+
+    return query;
+}
+
+/// Compile SQL AST to SPARQL
+export fn jgd_compile(query: *JGD_SQLQuery) ?*JGD_SPARQLQuery {
+    var compiler = SPARQLCompiler.init(allocator);
+
+    const sparql_text = compiler.compile(query) catch |err| {
+        last_error = @errorName(err);
+        return null;
+    };
+
+    const result = allocator.create(JGD_SPARQLQuery) catch {
+        last_error = "Out of memory";
+        return null;
+    };
+
+    result.* = .{ .text = sparql_text };
+    return result;
+}
+
+/// Get SPARQL as string
+export fn jgd_sparql_to_string(sparql: *JGD_SPARQLQuery) [*:0]const u8 {
+    // Ensure null-terminated for C
+    const terminated = allocator.dupeZ(u8, sparql.text) catch {
+        last_error = "Out of memory";
+        return "ERROR";
+    };
+    return terminated.ptr;
+}
+
+/// Free SQL query
+export fn jgd_free_query(query: *JGD_SQLQuery) void {
+    // Free AST recursively
+    query.deinit(allocator);
+    allocator.destroy(query);
+}
+
+/// Free SPARQL query
+export fn jgd_free_sparql(sparql: *JGD_SPARQLQuery) void {
+    allocator.free(sparql.text);
+    allocator.destroy(sparql);
+}
+
+/// Get last error message
+export fn jgd_last_error() [*:0]const u8 {
+    if (last_error) |err| {
+        const terminated = allocator.dupeZ(u8, err) catch return "Unknown error";
+        return terminated.ptr;
+    }
+    return "No error";
+}
+```
+
+=== Building
+
+```bash
+# Build shared library
+$ cd ffi/zig
+$ zig build-lib -dynamic -OReleaseFast src/jgd.zig
+
+# Output:
+# - Linux: libjgd.so
+# - macOS: libjgd.dylib
+# - Windows: jgd.dll
+
+# Run tests
+$ zig build test
+
+# Install
+$ sudo cp libjgd.so /usr/local/lib/
+$ sudo cp include/jgd_abi.h /usr/local/include/
+$ sudo ldconfig  # Linux only
+```
+
+== Layer 3: Language Bindings
+
+=== Purpose
+
+**Make JGD accessible from multiple languages** via C FFI:
+
+- Rust: Type-safe wrappers, CLI tools
+- Julia: ccall bindings, batch scripts
+- ReScript: Deno FFI, web UI
+- Python: ctypes bindings, data science
+
+=== Rust Bindings
+
+**bindings/rust/jgd-sql/src/lib.rs**:
+```rust
+//! Rust bindings for JGD SQL compiler
+
+use std::ffi::{CStr, CString};
+use std::os::raw::c_char;
+use std::ptr;
+
+#[link(name = "jgd")]
+extern "C" {
+    fn jgd_parse_sql(sql: *const c_char) -> *mut JGD_SQLQuery;
+    fn jgd_compile(query: *mut JGD_SQLQuery) -> *mut JGD_SPARQLQuery;
+    fn jgd_sparql_to_string(sparql: *mut JGD_SPARQLQuery) -> *const c_char;
+    fn jgd_free_query(query: *mut JGD_SQLQuery);
+    fn jgd_free_sparql(sparql: *mut JGD_SPARQLQuery);
+    fn jgd_last_error() -> *const c_char;
+}
+
+#[repr(C)]
+struct JGD_SQLQuery {
+    _private: [u8; 0],
+}
+
+#[repr(C)]
+struct JGD_SPARQLQuery {
+    _private: [u8; 0],
+}
+
+/// SQL Query handle (RAII wrapper)
+pub struct SQLQuery {
+    handle: *mut JGD_SQLQuery,
+}
+
+impl SQLQuery {
+    /// Parse SQL string
+    pub fn parse(sql: &str) -> Result<Self, String> {
+        let c_sql = CString::new(sql).map_err(|e| e.to_string())?;
+
+        let handle = unsafe { jgd_parse_sql(c_sql.as_ptr()) };
+
+        if handle.is_null() {
+            let err = unsafe {
+                CStr::from_ptr(jgd_last_error())
+                    .to_string_lossy()
+                    .into_owned()
+            };
+            return Err(err);
+        }
+
+        Ok(Self { handle })
+    }
+
+    /// Compile to SPARQL
+    pub fn compile(&self) -> Result<SPARQLQuery, String> {
+        let sparql_handle = unsafe { jgd_compile(self.handle) };
+
+        if sparql_handle.is_null() {
+            let err = unsafe {
+                CStr::from_ptr(jgd_last_error())
+                    .to_string_lossy()
+                    .into_owned()
+            };
+            return Err(err);
+        }
+
+        Ok(SPARQLQuery { handle: sparql_handle })
+    }
+}
+
+impl Drop for SQLQuery {
+    fn drop(&mut self) {
+        if !self.handle.is_null() {
+            unsafe { jgd_free_query(self.handle) };
+        }
+    }
+}
+
+/// SPARQL Query handle
+pub struct SPARQLQuery {
+    handle: *mut JGD_SPARQLQuery,
+}
+
+impl SPARQLQuery {
+    /// Get SPARQL as string
+    pub fn to_string(&self) -> String {
+        unsafe {
+            CStr::from_ptr(jgd_sparql_to_string(self.handle))
+                .to_string_lossy()
+                .into_owned()
+        }
+    }
+}
+
+impl Drop for SPARQLQuery {
+    fn drop(&mut self) {
+        if !self.handle.is_null() {
+            unsafe { jgd_free_sparql(self.handle) };
+        }
+    }
+}
+
+/// High-level API
+pub fn compile_sql_to_sparql(sql: &str) -> Result<String, String> {
+    let query = SQLQuery::parse(sql)?;
+    let sparql = query.compile()?;
+    Ok(sparql.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_and_compile() {
+        let sql = "SELECT db_name FROM jgd.d_p WHERE observes = 'climate'";
+        let sparql = compile_sql_to_sparql(sql).unwrap();
+
+        assert!(sparql.contains("SELECT"));
+        assert!(sparql.contains("jgd:D_p"));
+    }
+}
+```
+
+=== Julia Bindings
+
+**bindings/julia/JGD.jl**:
+```julia
+module JGD
+
+export compile_sql_to_sparql, D_p, BlindSpot
+
+const libjgd = "libjgd"  # Or full path
+
+# Low-level FFI
+function _parse_sql(sql::String)::Ptr{Cvoid}
+    ccall((:jgd_parse_sql, libjgd), Ptr{Cvoid}, (Cstring,), sql)
+end
+
+function _compile(query::Ptr{Cvoid})::Ptr{Cvoid}
+    ccall((:jgd_compile, libjgd), Ptr{Cvoid}, (Ptr{Cvoid},), query)
+end
+
+function _sparql_to_string(sparql::Ptr{Cvoid})::String
+    ptr = ccall((:jgd_sparql_to_string, libjgd), Cstring, (Ptr{Cvoid},), sparql)
+    unsafe_string(ptr)
+end
+
+function _last_error()::String
+    ptr = ccall((:jgd_last_error, libjgd), Cstring, ())
+    unsafe_string(ptr)
+end
+
+# High-level API
+"""
+    compile_sql_to_sparql(sql::String) -> String
+
+Compile JGD-SQL to SPARQL.
+
+# Example
+```julia
+sql = "SELECT db_name FROM jgd.d_p WHERE observes = 'climate'"
+sparql = compile_sql_to_sparql(sql)
+println(sparql)
+```
+"""
+function compile_sql_to_sparql(sql::String)::String
+    query = _parse_sql(sql)
+    query == C_NULL && error("Parse error: $(_last_error())")
+
+    sparql = _compile(query)
+    sparql == C_NULL && error("Compile error: $(_last_error())")
+
+    result = _sparql_to_string(sparql)
+
+    # TODO: Add finalizers for cleanup
+
+    return result
+end
+
+# Julia-friendly types
+struct D_p
+    name::String
+    observes::String
+    spatial_coverage::Union{Nothing, String}
+    temporal_coverage::Union{Nothing, Tuple{String, String}}
+end
+
+struct BlindSpot
+    region::String
+    reason::String
+    severity::Symbol  # :low, :medium, :high, :critical
+end
+
+end # module
+```
+
+=== ReScript Bindings
+
+**bindings/rescript/src/JGD_SQL.res**:
+```rescript
+// JGD SQL bindings for ReScript
+
+type sqlQuery
+type sparqlQuery
+
+// Low-level FFI (via Deno)
+@module("./jgd_ffi.js")
+external parseSql: string => Nullable.t<sqlQuery> = "parseSql"
+
+@module("./jgd_ffi.js")
+external compile: sqlQuery => Nullable.t<sparqlQuery> = "compile"
+
+@module("./jgd_ffi.js")
+external sparqlToString: sparqlQuery => string = "sparqlToString"
+
+@module("./jgd_ffi.js")
+external lastError: unit => string = "lastError"
+
+// High-level API
+let compileSqlToSparql = (sql: string): Result.t<string, string> => {
+  switch parseSql(sql)->Nullable.toOption {
+  | None => Error(`Parse error: ${lastError()}`)
+  | Some(query) =>
+    switch compile(query)->Nullable.toOption {
+    | None => Error(`Compile error: ${lastError()}`)
+    | Some(sparql) => Ok(sparqlToString(sparql))
+    }
+  }
+}
+
+// Type-safe D_p
+module D_p = {
+  type t = {
+    name: string,
+    observes: string,
+    spatialCoverage: option<string>,
+    temporalCoverage: option<(string, string)>,
+  }
+
+  let toSql = (dp: t): string => {
+    let spatial = switch dp.spatialCoverage {
+    | None => ""
+    | Some(cov) => `, spatial_coverage = '${cov}'`
+    }
+
+    let temporal = switch dp.temporalCoverage {
+    | None => ""
+    | Some((start, end)) => `, temporal_coverage = TSTZRANGE('${start}', '${end}')`
+    }
+
+    `CREATE D_P ${dp.name} (observes = '${dp.observes}'${spatial}${temporal})`
+  }
+}
+```
+
+**bindings/rescript/src/jgd_ffi.js** (Deno FFI):
+```javascript
+// Deno FFI bridge for JGD
+import { dlopen } from "https://deno.land/x/plug/mod.ts";
+
+const libPath = Deno.env.get("JGD_LIB") || "./libjgd.so";
+
+const lib = await dlopen(libPath, {
+  jgd_parse_sql: { parameters: ["pointer"], result: "pointer" },
+  jgd_compile: { parameters: ["pointer"], result: "pointer" },
+  jgd_sparql_to_string: { parameters: ["pointer"], result: "pointer" },
+  jgd_last_error: { parameters: [], result: "pointer" },
+});
+
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+export function parseSql(sql) {
+  const buf = encoder.encode(sql + "\0");
+  return lib.symbols.jgd_parse_sql(Deno.UnsafePointer.of(buf));
+}
+
+export function compile(query) {
+  return lib.symbols.jgd_compile(query);
+}
+
+export function sparqlToString(sparql) {
+  const ptr = lib.symbols.jgd_sparql_to_string(sparql);
+  return new Deno.UnsafePointerView(ptr).getCString();
+}
+
+export function lastError() {
+  const ptr = lib.symbols.jgd_last_error();
+  return new Deno.UnsafePointerView(ptr).getCString();
+}
+```
+
+=== Python Bindings
+
+**bindings/python/jgd/__init__.py**:
+```python
+"""Python bindings for Journey Grammar for Databases"""
+
+import ctypes
+import os
+from typing import Optional
+
+# Load library
+lib_name = os.environ.get("JGD_LIB", "libjgd.so")
+_lib = ctypes.CDLL(lib_name)
+
+# Configure function signatures
+_lib.jgd_parse_sql.argtypes = [ctypes.c_char_p]
+_lib.jgd_parse_sql.restype = ctypes.c_void_p
+
+_lib.jgd_compile.argtypes = [ctypes.c_void_p]
+_lib.jgd_compile.restype = ctypes.c_void_p
+
+_lib.jgd_sparql_to_string.argtypes = [ctypes.c_void_p]
+_lib.jgd_sparql_to_string.restype = ctypes.c_char_p
+
+_lib.jgd_free_query.argtypes = [ctypes.c_void_p]
+_lib.jgd_free_sparql.argtypes = [ctypes.c_void_p]
+
+_lib.jgd_last_error.restype = ctypes.c_char_p
+
+class JGDError(Exception):
+    """JGD compilation error"""
+    pass
+
+def compile_sql_to_sparql(sql: str) -> str:
+    """
+    Compile JGD-SQL to SPARQL.
+
+    Args:
+        sql: JGD-SQL query string
+
+    Returns:
+        SPARQL query string
+
+    Raises:
+        JGDError: If parsing or compilation fails
+
+    Example:
+        >>> sql = "SELECT db_name FROM jgd.d_p WHERE observes = 'climate'"
+        >>> sparql = compile_sql_to_sparql(sql)
+        >>> print(sparql)
+    """
+    # Parse SQL
+    query = _lib.jgd_parse_sql(sql.encode('utf-8'))
+    if not query:
+        error = _lib.jgd_last_error().decode('utf-8')
+        raise JGDError(f"Parse error: {error}")
+
+    try:
+        # Compile to SPARQL
+        sparql = _lib.jgd_compile(query)
+        if not sparql:
+            error = _lib.jgd_last_error().decode('utf-8')
+            raise JGDError(f"Compile error: {error}")
+
+        try:
+            # Get string
+            result = _lib.jgd_sparql_to_string(sparql).decode('utf-8')
+            return result
+        finally:
+            _lib.jgd_free_sparql(sparql)
+    finally:
+        _lib.jgd_free_query(query)
+
+__all__ = ['compile_sql_to_sparql', 'JGDError']
+```
+
+== Layer 4: Applications & Tools
+
+=== Rust CLI Tool
+
+**tools/jgd-sql-cli/src/main.rs**:
+```rust
+use clap::{Parser, Subcommand};
+use jgd_sql::compile_sql_to_sparql;
+use std::fs;
+use std::path::PathBuf;
+
+#[derive(Parser)]
+#[command(name = "jgd-sql")]
+#[command(about = "JGD-SQL compiler and tools")]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Compile SQL to SPARQL
+    Compile {
+        /// Input SQL file (or - for stdin)
+        #[arg(short, long)]
+        input: PathBuf,
+
+        /// Output SPARQL file (or - for stdout)
+        #[arg(short, long)]
+        output: Option<PathBuf>,
+    },
+
+    /// Validate SQL syntax
+    Validate {
+        /// SQL file to validate
+        file: PathBuf,
+    },
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let cli = Cli::parse();
+
+    match cli.command {
+        Commands::Compile { input, output } => {
+            let sql = fs::read_to_string(input)?;
+            let sparql = compile_sql_to_sparql(&sql)?;
+
+            if let Some(out_path) = output {
+                fs::write(out_path, sparql)?;
+            } else {
+                println!("{}", sparql);
+            }
+        }
+
+        Commands::Validate { file } => {
+            let sql = fs::read_to_string(file)?;
+            compile_sql_to_sparql(&sql)?;
+            println!("✓ Valid JGD-SQL");
+        }
+    }
+
+    Ok(())
+}
+```
+
+**Usage**:
+```bash
+# Compile SQL file to SPARQL
+$ jgd-sql compile -i metadata.jgd.sql -o metadata.sparql
+
+# Compile from stdin
+$ echo "SELECT db_name FROM jgd.d_p" | jgd-sql compile -i - -o -
+
+# Validate SQL
+$ jgd-sql validate metadata.jgd.sql
+```
+
+=== ReScript Web UI
+
+**tools/jgd-web-ui/src/App.res**:
+```rescript
+@react.component
+let make = () => {
+  let (sql, setSql) = React.useState(() => "")
+  let (sparql, setSparql) = React.useState(() => None)
+  let (error, setError) = React.useState(() => None)
+
+  let handleCompile = () => {
+    switch JGD_SQL.compileSqlToSparql(sql) {
+    | Ok(result) => {
+        setSparql(_ => Some(result))
+        setError(_ => None)
+      }
+    | Error(err) => {
+        setError(_ => Some(err))
+        setSparql(_ => None)
+      }
+    }
+  }
+
+  <div className="container">
+    <h1> {React.string("JGD-SQL Compiler")} </h1>
+
+    <div className="editor">
+      <h2> {React.string("JGD-SQL Input")} </h2>
+      <textarea
+        value={sql}
+        onChange={e => setSql(ReactEvent.Form.target(e)["value"])}
+        placeholder="Enter JGD-SQL query..."
+        rows={10}
+      />
+
+      <button onClick={_ => handleCompile()}>
+        {React.string("Compile to SPARQL")}
+      </button>
+    </div>
+
+    {switch error {
+    | Some(err) => <div className="error"> {React.string(err)} </div>
+    | None => React.null
+    }}
+
+    {switch sparql {
+    | Some(result) =>
+        <div className="output">
+          <h2> {React.string("SPARQL Output")} </h2>
+          <pre> {React.string(result)} </pre>
+        </div>
+    | None => React.null
+    }}
+  </div>
+}
+```
+
+== Data Flow Example
+
+**Complete flow: SQL → SPARQL**:
+
+```
+1. User writes SQL
+   ↓
+   "SELECT db_name FROM jgd.d_p WHERE observes = 'climate'"
+   ↓
+
+2. Rust CLI calls libjgd.so
+   ↓
+   jgd_parse_sql(sql_cstring)
+   ↓
+
+3. Zig lexer tokenizes
+   ↓
+   [SELECT, db_name, FROM, jgd, ., d_p, WHERE, observes, =, 'climate']
+   ↓
+
+4. Zig parser builds AST
+   ↓
+   SQLQuery::SelectDp {
+     fields: ["db_name"],
+     table: "jgd.d_p",
+     predicate: Equals("observes", "climate")
+   }
+   ↓
+
+5. Returns handle to Rust
+   ↓
+   query_handle: *mut JGD_SQLQuery
+   ↓
+
+6. Rust calls compile
+   ↓
+   jgd_compile(query_handle)
+   ↓
+
+7. Zig SPARQL compiler generates
+   ↓
+   SELECT ?db_name
+   WHERE {
+     ?db a jgd:D_p .
+     ?db jgd:db_name ?db_name .
+     ?db jgd:observes "climate" .
+   }
+   ↓
+
+8. Returns SPARQL handle
+   ↓
+   sparql_handle: *mut JGD_SPARQLQuery
+   ↓
+
+9. Rust gets string
+   ↓
+   jgd_sparql_to_string(sparql_handle)
+   ↓
+
+10. Cleanup
+    ↓
+    jgd_free_query(query_handle)
+    jgd_free_sparql(sparql_handle)
+    ↓
+
+11. User sees SPARQL
+```
+
+== Build Process
+
+**Complete build from scratch**:
+
+```bash
+# 1. Build Idris2 specification
+$ cd spec/idris2
+$ idris2 --build jgd.ipkg
+$ idris2 --exec generateCHeader JGD.ABI
+# Output: generated/jgd_abi.h
+
+# 2. Build Zig FFI
+$ cd ../../ffi/zig
+$ zig build-lib -dynamic -OReleaseFast src/jgd.zig
+# Output: libjgd.so
+
+# 3. Build Rust bindings
+$ cd ../../bindings/rust/jgd-sql
+$ cargo build --release
+# Output: target/release/libjgd_sql.rlib
+
+# 4. Build Rust CLI
+$ cd ../../../tools/jgd-sql-cli
+$ cargo build --release
+# Output: target/release/jgd-sql
+
+# 5. Install
+$ sudo cp ../../ffi/zig/libjgd.so /usr/local/lib/
+$ sudo cp ../../spec/idris2/generated/jgd_abi.h /usr/local/include/
+$ sudo cp target/release/jgd-sql /usr/local/bin/
+$ sudo ldconfig  # Linux
+
+# 6. Test
+$ jgd-sql compile -i test.sql
+```
+
+== Why This Architecture?
+
+=== Benefits
+
+**Formal Correctness (Idris2)**:
+- ✓ Provable semantics preservation
+- ✓ Type-level guarantees
+- ✓ Single source of truth
+
+**Memory Safety (Zig)**:
+- ✓ No buffer overflows
+- ✓ No use-after-free
+- ✓ No undefined behavior
+
+**Universal Access (C ABI)**:
+- ✓ Any language can use it
+- ✓ Platform independent
+- ✓ Stable ABI
+
+**Language Freedom (Bindings)**:
+- ✓ Use Rust for systems tools
+- ✓ Use Julia for data science
+- ✓ Use ReScript for web
+- ✓ Use Python for analytics
+
+=== Trade-offs
+
+**Complexity**:
+- ⚠ Multiple languages to maintain
+- ⚠ Build process more complex
+- ⚠ Requires expertise in Idris2, Zig, Rust
+
+**Development Speed**:
+- ⚠ Slower than single-language
+- ⚠ More boilerplate (FFI, bindings)
+
+**BUT**: Worth it for correctness, safety, and accessibility.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later

@@ -1,0 +1,808 @@
+= JGD-SQL: SQL Interface for Journey Grammar for Databases
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:toclevels: 3
+:license: PMPL-1.0-or-later
+
+== Overview
+
+**JGD-SQL is a SQL-like syntax for Journey Grammar for Databases.** It makes JGD accessible to the vast SQL developer community without requiring knowledge of RDF, Turtle, or SPARQL.
+
+=== The Accessibility Problem
+
+**Standard JGD** (Turtle/RDF):
+```turtle
+:ClimateDB a jgd:D_p ;
+    jgd:observes jgd-domain:GlobalClimate ;
+    jgd:spatialCoverage :Europe ;
+    jgd:knownBlindSpots [ jgd:spatial :SouthernOceans ] .
+```
+
+**SQL developer reaction**: "What are these prefixes? What's with the semicolons and square brackets? I just know CREATE TABLE and SELECT!"
+
+**JGD-SQL solution**:
+```sql
+CREATE D_P climate_db (
+    observes = 'global-climate',
+    spatial_coverage = 'Europe',
+    blind_spots = ['southern-oceans']
+);
+```
+
+**Same metadata, familiar syntax.**
+
+=== Design Principles
+
+1. **Familiar syntax** - Looks like SQL, works like SQL
+2. **Bidirectional** - JGD-SQL ↔ Turtle (lossless conversion)
+3. **Extensible** - Backend-specific extensions (verisimdb VQL, PostGIS, etc.)
+4. **Standard-compliant** - Uses SQL:2011 temporal features where possible
+5. **Optional** - JGD-SQL is a convenience layer, not required
+
+== DDL: Data Definition Language
+
+=== CREATE D_P: Define a Phenomenal Database
+
+**Syntax**:
+```sql
+CREATE D_P <database_name> (
+    observes = '<domain>',
+    [spatial_coverage = <geometry_or_region>,]
+    [temporal_coverage = <time_range>,]
+    [uncertainty = <level>,]
+    [container_type = '<type>',]
+    [metadata = <json_object>]
+);
+```
+
+**Example**:
+```sql
+-- Create a phenomenal database for climate observations
+CREATE D_P climate_db (
+    observes = 'global-climate',
+    spatial_coverage = ST_GeomFromText('POLYGON((
+        -180 -90, 180 -90, 180 90, -180 90, -180 -90
+    ))', 4326),
+    temporal_coverage = TSTZRANGE('1980-01-01', '2025-01-31'),
+    uncertainty = 'medium',
+    container_type = 'postgresql',
+    metadata = '{
+        "instruments": ["satellite", "ground-station"],
+        "resolution": "1km"
+    }'::jsonb
+);
+```
+
+**Translates to Turtle**:
+```turtle
+:ClimateDB a jgd:D_p ;
+    jgd:observes jgd-domain:GlobalClimate ;
+    jgd:spatialCoverage [
+        geo:asWKT "POLYGON(...)"^^geo:wktLiteral
+    ] ;
+    jgd:temporalCoverage [
+        time:hasBeginning "1980-01-01"^^xsd:date ;
+        time:hasEnd "2025-01-31"^^xsd:date
+    ] ;
+    jgd:uncertainty jgd:Medium ;
+    jgd:containerType jgd:PostgreSQL .
+```
+
+=== REGISTER DATABASE: Convert Existing Database to D_p
+
+**Syntax**:
+```sql
+REGISTER DATABASE <existing_db> AS D_P [<name>] (
+    observes = '<domain>',
+    [spatial_coverage = AUTO | <geometry>,]
+    [temporal_coverage = AUTO | <time_range>,]
+    [introspect = TRUE | FALSE]
+);
+```
+
+**Example**:
+```sql
+-- Register existing PostgreSQL database
+REGISTER DATABASE my_sales_db AS D_P sales_observations (
+    observes = 'retail-transactions',
+    spatial_coverage = AUTO,  -- Detect from address columns
+    temporal_coverage = AUTO, -- Detect from timestamp columns
+    introspect = TRUE         -- Analyze schema automatically
+);
+```
+
+**What happens**:
+1. Introspects `my_sales_db` schema
+2. Detects spatial columns (PostGIS geometries, address text)
+3. Detects temporal columns (timestamp, date ranges)
+4. Generates D_p metadata automatically
+5. Registers in JGD federation
+
+=== CREATE JGD_CONTAINER: Define Storage Container
+
+**Syntax**:
+```sql
+CREATE JGD_CONTAINER <container_name> (
+    backend = '<type>',
+    [stores = [<d_p_list>],]
+    [indexes = [<index_types>],]
+    [metadata = <json_object>]
+);
+```
+
+**Example**:
+```sql
+-- Create a verisimdb container (homoiconic)
+CREATE JGD_CONTAINER my_atlas (
+    backend = 'verisimdb',
+    stores = ['climate_db', 'economic_db', 'genomic_db'],
+    indexes = ['spatial', 'temporal', 'provenance'],
+    metadata = '{
+        "versioningStrategy": "git-like",
+        "queryLanguages": ["SPARQL", "VQL", "JGD-SQL"]
+    }'::jsonb
+);
+
+-- The container is ITSELF a D_p (homoiconic!)
+SELECT * FROM jgd.d_p WHERE db_name = 'my_atlas';
+```
+
+=== ALTER D_P: Modify Metadata
+
+**Syntax**:
+```sql
+ALTER D_P <database_name>
+    SET <property> = <value>
+    [, ADD <property> = <value>]
+    [, DROP <property>];
+```
+
+**Example**:
+```sql
+-- Update coverage as database grows
+ALTER D_P climate_db
+    SET spatial_coverage = ST_Union(
+        spatial_coverage,
+        ST_GeomFromText('POLYGON(...arctic-region...)')
+    ),
+    SET uncertainty = 'low',  -- Improved!
+    ADD validated_against = 'EPA-reference-station';
+
+-- Mark blind spot as filled
+ALTER D_P climate_db
+    DROP blind_spot WHERE region = 'arctic'
+    COMMENT 'Filled via new satellite deployment 2025';
+```
+
+=== DROP D_P: Remove from Federation
+
+**Syntax**:
+```sql
+DROP D_P [IF EXISTS] <database_name> [CASCADE];
+```
+
+**Example**:
+```sql
+-- Remove D_p metadata (doesn't delete actual database)
+DROP D_P climate_db_v2020;
+
+-- Remove and unregister all dependent databases
+DROP D_P climate_db CASCADE;
+```
+
+== DML: Data Manipulation Language
+
+=== INSERT: Add Blind Spots, Coverage, etc.
+
+**Syntax**:
+```sql
+INSERT INTO <d_p_name>.<property> (columns...)
+VALUES (...);
+```
+
+**Example**:
+```sql
+-- Add blind spots
+INSERT INTO climate_db.blind_spots (region, reason, severity)
+VALUES
+    ('southern-oceans', 'sensor-limitations', 'high'),
+    ('deep-ocean', 'depth-inaccessible', 'critical'),
+    ('pre-1980', 'no-satellite-data', 'medium');
+
+-- Add provenance
+INSERT INTO climate_db.provenance (activity, agent, timestamp)
+VALUES
+    ('satellite-deployment', 'NASA-NOAA', '2020-03-15'),
+    ('calibration-update', 'researcher-team', '2023-06-01');
+
+-- Add complementary databases
+INSERT INTO climate_db.complements (other_d_p, relationship)
+VALUES
+    ('ground_station_db', 'validates'),
+    ('ocean_buoy_db', 'fills-gaps');
+```
+
+=== UPDATE: Modify Properties
+
+**Syntax**:
+```sql
+UPDATE <d_p_name>
+SET <property> = <value>
+WHERE <condition>;
+```
+
+**Example**:
+```sql
+-- Reduce uncertainty after calibration
+UPDATE climate_db
+SET uncertainty = 'low',
+    last_validated = CURRENT_TIMESTAMP
+WHERE db_name = 'climate_db';
+
+-- Update blind spot status
+UPDATE climate_db.blind_spots
+SET severity = 'low',
+    status = 'partially-filled'
+WHERE region = 'southern-oceans'
+  AND filled_at > '2024-01-01';
+```
+
+=== DELETE: Remove Metadata
+
+**Syntax**:
+```sql
+DELETE FROM <d_p_name>.<property>
+WHERE <condition>;
+```
+
+**Example**:
+```sql
+-- Remove filled blind spots
+DELETE FROM climate_db.blind_spots
+WHERE status = 'filled';
+
+-- Remove outdated provenance
+DELETE FROM climate_db.provenance
+WHERE timestamp < '2020-01-01';
+```
+
+== Queries: SELECT from Federation
+
+=== Basic Queries
+
+**Find D_p instances**:
+```sql
+-- All phenomenal databases
+SELECT db_name, observes, uncertainty
+FROM jgd.d_p;
+
+-- Databases observing specific domain
+SELECT db_name, temporal_coverage
+FROM jgd.d_p
+WHERE observes = 'global-climate';
+
+-- High-uncertainty databases (need improvement)
+SELECT db_name, uncertainty, blind_spot_count
+FROM jgd.d_p
+WHERE uncertainty IN ('high', 'critical')
+ORDER BY blind_spot_count DESC;
+```
+
+=== Spatial Queries
+
+**Using PostGIS functions**:
+```sql
+-- Find D_p covering Europe
+SELECT db_name, observes
+FROM jgd.d_p
+WHERE ST_Intersects(
+    spatial_coverage,
+    ST_GeomFromText('POLYGON(...europe...)', 4326)
+);
+
+-- Find coverage gaps (blind spots) in a region
+SELECT db_name, bs.region, bs.severity
+FROM jgd.d_p dp
+JOIN jgd.blind_spots bs ON dp.id = bs.d_p_id
+WHERE ST_Within(
+    bs.geometry,
+    ST_GeomFromText('POLYGON(...arctic...)', 4326)
+)
+ORDER BY bs.severity DESC;
+
+-- Calculate total coverage across federation
+SELECT
+    ST_Union(spatial_coverage) AS total_coverage,
+    ST_Area(ST_Union(spatial_coverage)) AS coverage_area_km2
+FROM jgd.d_p
+WHERE observes = 'global-climate';
+```
+
+=== Temporal Queries
+
+**Using SQL:2011 temporal features**:
+```sql
+-- Find D_p covering specific time period
+SELECT db_name, observes
+FROM jgd.d_p
+WHERE temporal_coverage @> TIMESTAMPTZ '2020-01-01';
+
+-- Find databases with overlapping time coverage
+SELECT d1.db_name, d2.db_name,
+       d1.temporal_coverage * d2.temporal_coverage AS overlap
+FROM jgd.d_p d1
+JOIN jgd.d_p d2 ON d1.id < d2.id
+WHERE d1.temporal_coverage && d2.temporal_coverage
+  AND d1.observes = d2.observes;
+
+-- Find temporal gaps in coverage
+SELECT
+    observes,
+    RANGE_AGG(temporal_coverage) AS covered_periods,
+    -- Gaps = total period - covered periods
+    TSTZRANGE('1900-01-01', CURRENT_DATE) - RANGE_AGG(temporal_coverage) AS gaps
+FROM jgd.d_p
+GROUP BY observes;
+```
+
+=== Time-Travel Queries (verisimdb extension)
+
+**VQL-SQL extension for temporal queries**:
+```sql
+-- What databases existed on 2020-01-01?
+SELECT db_name, spatial_coverage
+FROM jgd.d_p
+FOR SYSTEM_TIME AS OF TIMESTAMP '2020-01-01 00:00:00'
+WHERE observes = 'global-climate';
+
+-- How did coverage evolve from 2020 to 2025?
+WITH coverage_2020 AS (
+    SELECT db_name, spatial_coverage AS cov_2020
+    FROM jgd.d_p FOR SYSTEM_TIME AS OF '2020-01-01'
+),
+coverage_2025 AS (
+    SELECT db_name, spatial_coverage AS cov_2025
+    FROM jgd.d_p FOR SYSTEM_TIME AS OF '2025-01-01'
+)
+SELECT
+    c20.db_name,
+    ST_Area(c25.cov_2025) - ST_Area(c20.cov_2020) AS coverage_increase_km2
+FROM coverage_2020 c20
+JOIN coverage_2025 c25 ON c20.db_name = c25.db_name;
+
+-- Cartographic delta: what improved?
+SELECT db_name,
+       version_from,
+       version_to,
+       blind_spots_filled,
+       uncertainty_reduction
+FROM jgd.cartographic_deltas
+WHERE updated_at BETWEEN '2020-01-01' AND '2025-01-01'
+ORDER BY uncertainty_reduction DESC;
+```
+
+=== Federation Queries
+
+**Cross-database queries**:
+```sql
+-- Find databases that complement each other
+SELECT
+    d1.db_name AS primary_db,
+    d2.db_name AS complement_db,
+    rel.relationship_type
+FROM jgd.d_p d1
+JOIN jgd.relationships rel ON d1.id = rel.from_d_p
+JOIN jgd.d_p d2 ON rel.to_d_p = d2.id
+WHERE rel.relationship_type IN ('complements', 'validates', 'fills-gaps');
+
+-- Find blind spots that could be filled by other databases
+SELECT
+    bs.d_p_name,
+    bs.region AS blind_spot,
+    d2.db_name AS potential_filler
+FROM jgd.blind_spots bs
+JOIN jgd.d_p d2 ON ST_Covers(d2.spatial_coverage, bs.geometry)
+WHERE bs.status = 'unfilled';
+
+-- Identify conflicting databases (same domain, different results)
+SELECT
+    d1.db_name,
+    d2.db_name,
+    d1.observes AS domain
+FROM jgd.d_p d1
+JOIN jgd.d_p d2 ON d1.observes = d2.observes AND d1.id < d2.id
+WHERE ST_Overlaps(d1.spatial_coverage, d2.spatial_coverage)
+  AND d1.temporal_coverage && d2.temporal_coverage
+  AND EXISTS (
+      SELECT 1 FROM jgd.conflicts c
+      WHERE c.d_p_1 = d1.id AND c.d_p_2 = d2.id
+  );
+```
+
+== Data Types
+
+=== JGD-SQL to SQL Type Mapping
+
+[cols="1,2,2"]
+|===
+|JGD Concept |SQL Type |Example
+
+|D_p identifier
+|UUID or TEXT
+|`'550e8400-e29b-41d4-a716-446655440000'::uuid`
+
+|Domain (observes)
+|TEXT
+|`'global-climate'`
+
+|Spatial coverage
+|GEOMETRY (PostGIS)
+|`ST_GeomFromText('POLYGON(...)', 4326)`
+
+|Temporal coverage
+|TSTZRANGE (PostgreSQL)
+|`TSTZRANGE('1980-01-01', '2025-01-31')`
+
+|Uncertainty
+|ENUM('low', 'medium', 'high', 'critical')
+|`'medium'::uncertainty_level`
+
+|Container type
+|TEXT or ENUM
+|`'verisimdb'`, `'postgresql'`, `'neo4j'`
+
+|Blind spots
+|TABLE with GEOMETRY
+|`blind_spots(region TEXT, geometry GEOMETRY)`
+
+|Provenance
+|TABLE with JSONB
+|`provenance(activity TEXT, metadata JSONB)`
+
+|Metadata
+|JSONB
+|`'{"instruments": ["satellite"]}'::jsonb`
+|===
+
+=== Custom Types
+
+```sql
+-- Uncertainty levels
+CREATE TYPE uncertainty_level AS ENUM (
+    'critical', 'high', 'medium', 'low', 'minimal'
+);
+
+-- Container types
+CREATE TYPE container_type AS ENUM (
+    'verisimdb', 'postgresql', 'mysql', 'neo4j',
+    'mongodb', 'rdf-triplestore'
+);
+
+-- Relationship types
+CREATE TYPE relationship_type AS ENUM (
+    'complements', 'validates', 'fills-gaps',
+    'contradicts', 'supersedes', 'derived-from'
+);
+```
+
+== PostgreSQL Extension: jgd
+
+=== Installation
+
+```sql
+-- Install JGD extension
+CREATE EXTENSION jgd;
+
+-- Creates schema and tables
+\dn jgd
+-- Schema: jgd
+
+\dt jgd.*
+-- Tables:
+--   jgd.d_p                (phenomenal databases)
+--   jgd.blind_spots        (known gaps)
+--   jgd.coverage           (spatial/temporal)
+--   jgd.containers         (storage containers)
+--   jgd.relationships      (D_p connections)
+--   jgd.provenance         (lineage)
+--   jgd.cartographic_deltas (evolution tracking)
+```
+
+=== Schema Design
+
+**Core table: jgd.d_p**
+```sql
+CREATE TABLE jgd.d_p (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    db_name TEXT UNIQUE NOT NULL,
+    observes TEXT NOT NULL,
+
+    -- Coverage
+    spatial_coverage GEOMETRY(POLYGON, 4326),
+    temporal_coverage TSTZRANGE,
+
+    -- Quality
+    uncertainty uncertainty_level,
+    validated_against TEXT,
+    last_validated TIMESTAMPTZ,
+
+    -- Container
+    container_type container_type,
+    container_id UUID REFERENCES jgd.containers(id),
+
+    -- Metadata
+    metadata JSONB,
+
+    -- Audit
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+
+    -- Spatial index
+    CONSTRAINT spatial_coverage_valid CHECK (
+        ST_IsValid(spatial_coverage)
+    ),
+
+    -- Temporal index
+    CONSTRAINT temporal_coverage_valid CHECK (
+        NOT isempty(temporal_coverage)
+    )
+);
+
+-- Indexes
+CREATE INDEX idx_d_p_spatial ON jgd.d_p USING GIST (spatial_coverage);
+CREATE INDEX idx_d_p_temporal ON jgd.d_p USING GIST (temporal_coverage);
+CREATE INDEX idx_d_p_observes ON jgd.d_p (observes);
+CREATE INDEX idx_d_p_metadata ON jgd.d_p USING GIN (metadata);
+```
+
+**Blind spots table**:
+```sql
+CREATE TABLE jgd.blind_spots (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    d_p_id UUID REFERENCES jgd.d_p(id) ON DELETE CASCADE,
+    d_p_name TEXT NOT NULL,  -- Denormalized for convenience
+
+    region TEXT NOT NULL,
+    geometry GEOMETRY(POLYGON, 4326),
+    reason TEXT,
+    severity uncertainty_level,
+    status TEXT DEFAULT 'unfilled',
+
+    filled_at TIMESTAMPTZ,
+    filled_by UUID REFERENCES jgd.d_p(id),
+
+    metadata JSONB
+);
+
+CREATE INDEX idx_blind_spots_spatial ON jgd.blind_spots USING GIST (geometry);
+CREATE INDEX idx_blind_spots_d_p ON jgd.blind_spots (d_p_id);
+```
+
+**Relationships table**:
+```sql
+CREATE TABLE jgd.relationships (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    from_d_p UUID REFERENCES jgd.d_p(id) ON DELETE CASCADE,
+    to_d_p UUID REFERENCES jgd.d_p(id) ON DELETE CASCADE,
+    relationship_type relationship_type NOT NULL,
+
+    confidence NUMERIC(3,2) CHECK (confidence BETWEEN 0 AND 1),
+    established_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+
+    metadata JSONB,
+
+    CONSTRAINT no_self_reference CHECK (from_d_p != to_d_p)
+);
+
+CREATE INDEX idx_rel_from ON jgd.relationships (from_d_p);
+CREATE INDEX idx_rel_to ON jgd.relationships (to_d_p);
+CREATE INDEX idx_rel_type ON jgd.relationships (relationship_type);
+```
+
+=== Functions and Procedures
+
+**Automatic coverage detection**:
+```sql
+CREATE FUNCTION jgd.detect_spatial_coverage(
+    database_name TEXT,
+    table_name TEXT DEFAULT NULL,
+    geometry_column TEXT DEFAULT 'geom'
+) RETURNS GEOMETRY
+LANGUAGE plpgsql AS $$
+DECLARE
+    coverage GEOMETRY;
+BEGIN
+    -- Detect spatial extent from PostGIS column
+    EXECUTE format(
+        'SELECT ST_Extent(%I) FROM %I.%I',
+        geometry_column,
+        database_name,
+        COALESCE(table_name, 'spatial_data')
+    ) INTO coverage;
+
+    RETURN coverage;
+END;
+$$;
+
+CREATE FUNCTION jgd.detect_temporal_coverage(
+    database_name TEXT,
+    table_name TEXT DEFAULT NULL,
+    timestamp_column TEXT DEFAULT 'created_at'
+) RETURNS TSTZRANGE
+LANGUAGE plpgsql AS $$
+DECLARE
+    min_time TIMESTAMPTZ;
+    max_time TIMESTAMPTZ;
+BEGIN
+    -- Detect temporal extent from timestamp column
+    EXECUTE format(
+        'SELECT MIN(%I), MAX(%I) FROM %I.%I',
+        timestamp_column, timestamp_column,
+        database_name,
+        COALESCE(table_name, 'temporal_data')
+    ) INTO min_time, max_time;
+
+    RETURN TSTZRANGE(min_time, max_time);
+END;
+$$;
+```
+
+**Register database automatically**:
+```sql
+CREATE PROCEDURE jgd.register_database(
+    database_name TEXT,
+    observes TEXT,
+    introspect BOOLEAN DEFAULT TRUE
+) LANGUAGE plpgsql AS $$
+DECLARE
+    spatial_cov GEOMETRY;
+    temporal_cov TSTZRANGE;
+BEGIN
+    -- Auto-detect coverage if introspect enabled
+    IF introspect THEN
+        spatial_cov := jgd.detect_spatial_coverage(database_name);
+        temporal_cov := jgd.detect_temporal_coverage(database_name);
+    END IF;
+
+    -- Insert D_p
+    INSERT INTO jgd.d_p (db_name, observes, spatial_coverage, temporal_coverage)
+    VALUES (database_name, observes, spatial_cov, temporal_cov);
+
+    RAISE NOTICE 'Registered % as D_p observing %', database_name, observes;
+END;
+$$;
+```
+
+== Comparison: JGD-SQL vs Turtle
+
+**Same metadata, two syntaxes:**
+
+**JGD-SQL**:
+```sql
+CREATE D_P climate_db (
+    observes = 'global-climate',
+    spatial_coverage = ST_GeomFromText('POLYGON((...))', 4326),
+    temporal_coverage = TSTZRANGE('1980-01-01', '2025-01-31'),
+    uncertainty = 'medium'
+);
+
+INSERT INTO climate_db.blind_spots (region, reason)
+VALUES ('southern-oceans', 'sensor-limitations');
+
+SELECT db_name, uncertainty
+FROM jgd.d_p
+WHERE observes = 'global-climate';
+```
+
+**JGD Turtle (equivalent)**:
+```turtle
+:ClimateDB a jgd:D_p ;
+    jgd:observes jgd-domain:GlobalClimate ;
+    jgd:spatialCoverage [
+        geo:asWKT "POLYGON(...)"^^geo:wktLiteral
+    ] ;
+    jgd:temporalCoverage [
+        time:hasBeginning "1980-01-01"^^xsd:date ;
+        time:hasEnd "2025-01-31"^^xsd:date
+    ] ;
+    jgd:uncertainty jgd:Medium ;
+    jgd:knownBlindSpots [
+        jgd:spatial :SouthernOceans ;
+        jgd:reason "sensor-limitations"
+    ] .
+```
+
+**JGD-SQL is ~50% less verbose and uses familiar SQL syntax.**
+
+== Examples
+
+=== Complete Workflow
+
+```sql
+-- 1. Register existing database
+REGISTER DATABASE my_postgres_db AS D_P retail_observations (
+    observes = 'retail-sales',
+    spatial_coverage = AUTO,
+    temporal_coverage = AUTO
+);
+
+-- 2. Add blind spots
+INSERT INTO retail_observations.blind_spots (region, reason, severity)
+VALUES
+    ('rural-areas', 'sparse-store-coverage', 'high'),
+    ('online-sales', 'no-location-data', 'medium');
+
+-- 3. Query federation for gaps
+SELECT
+    db_name,
+    COUNT(bs.id) AS blind_spot_count,
+    STRING_AGG(bs.region, ', ') AS regions
+FROM jgd.d_p dp
+LEFT JOIN jgd.blind_spots bs ON dp.id = bs.d_p_id
+WHERE observes LIKE '%retail%'
+GROUP BY db_name
+ORDER BY blind_spot_count DESC;
+
+-- 4. Find complementary databases
+SELECT
+    r.from_d_p,
+    r.to_d_p,
+    r.relationship_type
+FROM jgd.relationships r
+WHERE relationship_type = 'fills-gaps'
+  AND from_d_p = (SELECT id FROM jgd.d_p WHERE db_name = 'retail_observations');
+
+-- 5. Update as coverage improves
+UPDATE retail_observations.blind_spots
+SET status = 'filled',
+    filled_at = CURRENT_TIMESTAMP,
+    filled_by = (SELECT id FROM jgd.d_p WHERE db_name = 'online_sales_db')
+WHERE region = 'online-sales';
+```
+
+== Implementation Roadmap
+
+=== Phase 1: Core Extension (Q2 2026)
+- [ ] PostgreSQL extension scaffolding
+- [ ] Core tables (d_p, blind_spots, relationships)
+- [ ] Basic DDL (CREATE D_P, REGISTER DATABASE)
+- [ ] Basic queries (SELECT from jgd.d_p)
+
+=== Phase 2: Advanced Queries (Q3 2026)
+- [ ] Spatial queries (PostGIS integration)
+- [ ] Temporal queries (SQL:2011 features)
+- [ ] Federation queries (relationships, gaps)
+- [ ] Auto-detection functions
+
+=== Phase 3: verisimdb Integration (Q4 2026)
+- [ ] Time-travel queries (FOR SYSTEM_TIME)
+- [ ] Cartographic deltas
+- [ ] Metamorphic transformations via SQL
+
+=== Phase 4: Other Backends (Q1 2027)
+- [ ] MySQL adapter
+- [ ] SQLite adapter
+- [ ] SQL-to-Turtle compiler (standalone tool)
+
+== Conclusion
+
+**JGD-SQL makes Journey Grammar accessible to millions of SQL developers** without requiring knowledge of RDF, Turtle, or SPARQL.
+
+**Use JGD-SQL for**:
+- Rapid prototyping
+- SQL-centric organizations
+- Data analysts and DBAs
+- PostgreSQL/MySQL environments
+
+**Use JGD Turtle/RDF for**:
+- Semantic web integration
+- Complex reasoning (OWL)
+- RDF-native environments
+
+**Both are first-class interfaces** to the same underlying JGD framework.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later
