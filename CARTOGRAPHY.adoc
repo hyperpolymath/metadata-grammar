@@ -1,0 +1,566 @@
+= Practical Cartography with Metadata Grammar
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:toclevels: 3
+:license: PMPL-1.0-or-later
+
+== Introduction
+
+This guide shows how to use **metadata-grammar** for practical data cartography—mapping reality through systematic observation and federation of phenomenal databases.
+
+== The Three-Zone Model
+
+=== Zone 1: The White Box (What We Know)
+
+**Description**: Phenomenal databases we've created—observed, measured, mapped.
+
+**Properties**:
+- Transparent and inspectable
+- Schema-defined structure
+- Known provenance
+- Registered with verisimdb
+
+**How to work with it**:
+- Catalog databases using metadata-grammar
+- Express spatiotemporal coverage explicitly
+- Track quality and uncertainty
+- Link to other databases in federation
+
+=== Zone 2: Known Darkness (Identified Blind Spots)
+
+**Description**: Domains we know exist but haven't measured.
+
+**Examples**:
+- Geographic gaps (deep ocean, polar regions)
+- Temporal gaps (pre-satellite era, future projections)
+- Population gaps (underrepresented groups)
+- Variable gaps (unmeasured risk factors)
+
+**How to work with it**:
+- Explicitly mark blind spots in metadata
+- Prioritize exploration efforts
+- Track coverage metrics over time
+- Guide data collection to fill gaps
+
+=== Zone 3: Unknown Darkness (Unknown Unknowns)
+
+**Description**: Domains we don't even know to look for.
+
+**Properties**:
+- Beyond current conceptual frameworks
+- Require new instruments or theories
+- True epistemic darkness
+
+**How to work with it**:
+- Acknowledge in coverage estimates
+- Track discovery of new domains
+- Maintain epistemic humility
+- Document surprises when found
+
+== Creating a Phenomenal Database
+
+=== Step 1: Define What You're Observing
+
+```turtle
+@prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+:MyObservation a mg:PhenomenalDatabase ;
+    # What domain of reality does this map?
+    mg:observes mg-domain:UrbanAirQuality ;
+
+    # From what perspective?
+    mg:perspective "ground-sensor-network" ;
+    mg:methodology "PM2.5 measurements every 5 minutes" ;
+    mg:instruments :SensorArray-2025 .
+```
+
+=== Step 2: Express Spatiotemporal Coverage
+
+```turtle
+:MyObservation
+    # Spatial coverage (where is the white box?)
+    mg:spatialCoverage [
+        geo:hasGeometry "POLYGON((...))"^^geo:wktLiteral ;
+        mg:spatialResolution "100 meters" ;
+        rdfs:label "Greater London area"
+    ] ;
+
+    # Temporal coverage (when is the white box?)
+    mg:temporalCoverage [
+        time:hasBeginning "2020-01-01T00:00:00Z"^^xsd:dateTime ;
+        time:hasEnd "2025-01-31T23:59:59Z"^^xsd:dateTime ;
+        mg:temporalResolution "5 minutes"
+    ] .
+```
+
+=== Step 3: Mark Known Blind Spots (Zone 2)
+
+```turtle
+:MyObservation
+    # Spatial blind spots we're aware of
+    mg:knownBlindSpots [
+        mg:spatial [
+            rdfs:label "Indoor environments" ;
+            mg:reason "Sensors only outdoors"
+        ] ;
+        mg:spatial [
+            rdfs:label "Private property" ;
+            mg:reason "Access restrictions"
+        ] ;
+
+        # Temporal blind spots
+        mg:temporal [
+            rdfs:label "Pre-2020 period" ;
+            mg:reason "Sensor network not deployed"
+        ] ;
+
+        # Variable blind spots
+        mg:variables [
+            rdfs:label "Ultrafine particles (<PM0.1)" ;
+            mg:reason "Sensor limitations"
+        ]
+    ] .
+```
+
+=== Step 4: Express Quality and Uncertainty
+
+```turtle
+:MyObservation
+    # Overall quality assessment
+    mg:qualityLevel mg:High ;
+    mg:uncertainty mg:Low ;
+
+    # Known biases
+    mg:knownBiases [
+        rdfs:label "Urban heat island effect on sensor readings" ;
+        mg:magnitude "±3% systematic error"
+    ] ;
+
+    # Limitations
+    mg:limitations [
+        rdfs:label "Weather interference during heavy rain" ;
+        mg:impactedMeasurements 0.05  # 5% of measurements affected
+    ] ;
+
+    # Validation status
+    mg:validatedAgainst :ReferenceStation-EPA ;
+    mg:validationCorrelation 0.95 .
+```
+
+=== Step 5: Track Provenance
+
+```turtle
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+:MyObservation
+    # How was this created?
+    prov:wasGeneratedBy :AirQualityMonitoringProject ;
+    prov:wasAttributedTo :ResearchTeam-UCL ;
+
+    # When?
+    prov:generatedAtTime "2025-01-31T12:00:00Z"^^xsd:dateTime ;
+
+    # From what sources?
+    prov:wasDerivedFrom :RawSensorData-2020-2025 ;
+
+    # Using what methods?
+    prov:used :CalibrationProtocol-v2 ;
+    prov:used :QualityControlAlgorithm-v3 .
+```
+
+=== Step 6: Register with verisimdb
+
+```turtle
+@prefix vsim: <https://hyperpolymath.org/ns/verisimdb#> .
+
+:MyObservation
+    # Join the federation
+    mg:registeredIn :GlobalAtlas ;
+    vsim:indexedBy :GlobalAtlas ;
+
+    # Enable temporal queries
+    vsim:stored-in :VerisimDBInstance ;
+    vsim:version-history :MyObservation-History ;
+
+    # Enable discovery
+    mg:accessEndpoint <https://api.example.org/air-quality> ;
+    mg:sparqlEndpoint <https://api.example.org/sparql> .
+```
+
+== Working with the Federation
+
+=== Discovering Databases
+
+**Query verisimdb for coverage**:
+
+```sparql
+PREFIX mg: <https://hyperpolymath.org/ns/metadata-grammar#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+# Find all databases covering London during 2020-2025
+SELECT ?db ?title ?coverage
+WHERE {
+    ?db a mg:PhenomenalDatabase ;
+        mg:title ?title ;
+        mg:spatialCoverage ?spatial ;
+        mg:temporalCoverage ?temporal .
+
+    ?spatial geo:sfIntersects :LondonPolygon .
+    ?temporal time:hasBeginning ?start ;
+              time:hasEnd ?end .
+
+    FILTER(?start <= "2025-12-31"^^xsd:date)
+    FILTER(?end >= "2020-01-01"^^xsd:date)
+}
+```
+
+=== Identifying Coverage Gaps
+
+**Find blind spots across the federation**:
+
+```sparql
+PREFIX mg: <https://hyperpolymath.org/ns/metadata-grammar#>
+
+# What spatial regions are blind spots in air quality data?
+SELECT ?region (COUNT(?db) as ?coverage)
+WHERE {
+    ?db a mg:PhenomenalDatabase ;
+        mg:observes mg-domain:AirQuality ;
+        mg:knownBlindSpots ?blindspot .
+
+    ?blindspot mg:spatial ?region .
+}
+GROUP BY ?region
+ORDER BY DESC(?coverage)
+```
+
+=== Composing Databases
+
+**Federated query across multiple databases**:
+
+```sparql
+PREFIX mg: <https://hyperpolymath.org/ns/metadata-grammar#>
+
+# Correlate air quality with health outcomes
+SELECT ?location ?pm25 ?asthmaRate
+WHERE {
+    # Air quality database
+    SERVICE <https://airquality.example.org/sparql> {
+        ?observation mg:location ?location ;
+                     mg:pm25 ?pm25 .
+    }
+
+    # Health database
+    SERVICE <https://health.example.org/sparql> {
+        ?outcome mg:location ?location ;
+                 mg:asthmaRate ?asthmaRate .
+    }
+}
+```
+
+== Tracking Cartographic Evolution
+
+=== Version 1: Initial Observation (2020)
+
+```turtle
+:AirQualityDB_v2020 a mg:PhenomenalDatabase ;
+    vsim:validTime "2020-01-01" ;
+    mg:spatialCoverage :CentralLondon ;  # Limited coverage
+    mg:uncertainty mg:High ;  # Early deployment
+    mg:knownBlindSpots [
+        mg:spatial :OuterLondon ;  # Not yet covered
+        mg:variables :NO2  # Not yet measured
+    ] .
+```
+
+=== Version 2: Expanded Coverage (2023)
+
+```turtle
+:AirQualityDB_v2023 a mg:PhenomenalDatabase ;
+    vsim:validTime "2023-01-01" ;
+    vsim:supersedes :AirQualityDB_v2020 ;
+
+    mg:spatialCoverage :GreaterLondon ;  # Expanded!
+    mg:uncertainty mg:Medium ;  # Improved calibration
+
+    # Blind spot filled
+    mg:cartographicDelta [
+        mg:blindSpotFilled :OuterLondon ;
+        mg:newVariable :NO2  # Now measured
+    ] ;
+
+    # Remaining blind spots
+    mg:knownBlindSpots [
+        mg:variables :Ultrafines  # Still not measured
+    ] .
+```
+
+=== Version 3: High-Resolution (2025)
+
+```turtle
+:AirQualityDB_v2025 a mg:PhenomenalDatabase ;
+    vsim:validTime "2025-01-31" ;
+    vsim:supersedes :AirQualityDB_v2023 ;
+
+    mg:spatialCoverage :GreaterLondon ;
+    mg:spatialResolution "50 meters" ;  # Improved from 100m
+    mg:uncertainty mg:Low ;  # Mature deployment
+
+    mg:cartographicDelta [
+        mg:resolutionImproved "100m → 50m" ;
+        mg:uncertaintyReduced 0.15 ;
+        mg:newVariable :Ultrafines  # Finally added!
+    ] ;
+
+    # Minimal blind spots remaining
+    mg:knownBlindSpots [
+        mg:spatial :PrivateProperty  # Irreducible
+    ] .
+```
+
+=== Querying Temporal Evolution
+
+**"What did we know about air quality on 2022-06-01?"**
+
+```sparql
+PREFIX vsim: <https://hyperpolymath.org/ns/verisimdb#>
+PREFIX mg: <https://hyperpolymath.org/ns/metadata-grammar#>
+
+SELECT ?coverage ?uncertainty ?blindSpots
+WHERE {
+    # Query verisimdb at specific time
+    vsim:AtTime("2022-06-01") {
+        :AirQualityDB
+            mg:spatialCoverage ?coverage ;
+            mg:uncertainty ?uncertainty ;
+            mg:knownBlindSpots ?blindSpots .
+    }
+}
+```
+
+== Federation-Level Metrics
+
+=== Global Exploration Status
+
+```turtle
+:GlobalAtlas a mg:CartographicIndex ;
+    # Overall coverage
+    mg:whiteBoxCoverage 0.15 ;
+    mg:knownDarknessCoverage 0.25 ;
+    mg:unknownDarknessCoverage 0.60 ;
+
+    # Federation size
+    mg:federationSize 1500000 ;
+    mg:totalObservations 5.2e15 ;  # 5.2 quadrillion data points
+
+    # Domain coverage
+    mg:domainsCataloged [
+        mg-domain:Climate,
+        mg-domain:Economy,
+        mg-domain:Health,
+        mg-domain:Environment,
+        # ... 500+ domains
+    ] ;
+
+    # Spatial coverage
+    mg:earthSurfaceCoverage 0.73 ;  # 73% of Earth surface
+    mg:oceanCoverage 0.35 ;  # 35% of ocean volume
+    mg:atmosphereCoverage 0.60 ;  # 60% of atmosphere
+
+    # Temporal coverage
+    mg:historicalCoverage 0.20 ;  # 20% of human history
+    mg:recentCoverage 0.95 ;  # 95% of last decade
+
+    # Epistemic humility
+    mg:confidenceInCoverage mg:Low ;  # Honest uncertainty
+    rdfs:comment "These estimates themselves have high uncertainty" .
+```
+
+=== Exploration Priorities
+
+```turtle
+:GlobalAtlas
+    mg:explorationQueue [
+        (mg:priority 1) [
+            mg:domain mg-domain:DeepOceanBiology ;
+            mg:currentCoverage 0.05 ;
+            mg:expectedImpact mg:VeryHigh ;
+            mg:feasibility mg:Medium
+        ] ;
+        (mg:priority 2) [
+            mg:domain mg-domain:SubSurfaceGeology ;
+            mg:currentCoverage 0.10 ;
+            mg:expectedImpact mg:High ;
+            mg:feasibility mg:Low
+        ] ;
+        (mg:priority 3) [
+            mg:domain mg-domain:MicrobialDiversity ;
+            mg:currentCoverage 0.02 ;
+            mg:expectedImpact mg:High ;
+            mg:feasibility mg:High
+        ]
+    ] .
+```
+
+== Best Practices
+
+=== 1. Always Mark Your Blind Spots
+
+**Bad** (pretends complete coverage):
+```turtle
+:BadDatabase a mg:PhenomenalDatabase ;
+    mg:spatialCoverage :EntireWorld .  # Overconfident!
+```
+
+**Good** (honest about limitations):
+```turtle
+:GoodDatabase a mg:PhenomenalDatabase ;
+    mg:spatialCoverage :MeasuredRegions ;
+    mg:knownBlindSpots [
+        mg:spatial :UnmeasuredRegions ;
+        mg:reason "Instrument limitations"
+    ] ;
+    mg:estimatedUnknownBlindSpots mg:Moderate .  # Epistemic humility
+```
+
+=== 2. Express Uncertainty Explicitly
+
+```turtle
+:MyDatabase
+    mg:uncertainty mg:Medium ;
+    mg:uncertaintyEstimate [
+        mg:systematic "±5%" ;
+        mg:random "±2%" ;
+        mg:methodological "Unknown, possibly large"
+    ] .
+```
+
+=== 3. Track Perspective and Bias
+
+```turtle
+:MyDatabase
+    mg:perspective "urban-sensor-network" ;
+    mg:knownBiases [
+        rdfs:label "Urban bias" ;
+        mg:description "Rural areas underrepresented" ;
+        mg:impactLevel mg:High
+    ] ;
+    mg:samplingStrategy "Convenience sampling (non-random)" .
+```
+
+=== 4. Link to the Federation
+
+```turtle
+:MyDatabase
+    # Register with atlas
+    mg:registeredIn :GlobalAtlas ;
+
+    # Declare relationships
+    mg:complementedBy :OtherDatabase ;  # Fills your blind spots
+    mg:contradicts :OlderDatabase ;  # Corrects errors
+    mg:derivedFrom :RawData ;  # Provenance
+
+    # Enable discovery
+    mg:sparqlEndpoint <https://api.example.org/sparql> .
+```
+
+=== 5. Version Your Cartography
+
+```turtle
+:MyDatabase_v2
+    vsim:supersedes :MyDatabase_v1 ;
+    mg:cartographicDelta [
+        mg:improvement "Calibration protocol updated" ;
+        mg:blindSpotFilled :PreviousGap ;
+        mg:uncertaintyReduced 0.10
+    ] ;
+    mg:whatChanged [
+        rdfs:comment "Discovered systematic error in v1" ;
+        rdfs:comment "Applied retrospective correction" ;
+        rdfs:comment "Added 500 new sensors in undersampled regions"
+    ] .
+```
+
+== Examples from Different Domains
+
+=== Climate Science
+
+```turtle
+:GlobalClimateDB a mg:PhenomenalDatabase ;
+    mg:observes mg-domain:GlobalClimate ;
+    mg:spatialCoverage :GlobalLandAndOcean ;
+    mg:temporalCoverage "1850-2025" ;
+
+    mg:knownBlindSpots [
+        mg:spatial :DeepOcean ;
+        mg:spatial :PolarRegions-pre1950 ;
+        mg:temporal :pre-1850
+    ] ;
+
+    mg:uncertainty [
+        mg:spatial :GlobalLand mg:Low ;
+        mg:spatial :Ocean mg:Medium ;
+        mg:temporal :recent mg:Low ;
+        mg:temporal :pre-1900 mg:High
+    ] .
+```
+
+=== Genomics
+
+```turtle
+:HumanGenomeDB a mg:PhenomenalDatabase ;
+    mg:observes mg-domain:HumanGenomicVariation ;
+    mg:populationCoverage :GlobalSample ;
+
+    mg:knownBiases [
+        rdfs:label "European ancestry overrepresentation" ;
+        mg:magnitude "80% of samples from European descent"
+    ] ;
+
+    mg:knownBlindSpots [
+        mg:populations :IndigenousGroups ;
+        mg:variants :RareVariants  # <0.1% frequency
+    ] .
+```
+
+=== Social Science
+
+```turtle
+:SocialBehaviorDB a mg:PhenomenalDatabase ;
+    mg:observes mg-domain:OnlineSocialBehavior ;
+    mg:dataSources :TwitterAPI, :FacebookAPI ;
+
+    mg:knownBiases [
+        rdfs:label "Platform bias" ;
+        mg:description "Only captures users of these platforms"
+    ] ;
+
+    mg:knownBlindSpots [
+        mg:populations :NonInternetUsers ;
+        mg:populations :PrivateInteractions ;
+        mg:behaviors :OfflineSocialLife
+    ] ;
+
+    mg:estimatedCoverageOfTotalPhenomenon 0.05 .  # Only 5% of social behavior!
+```
+
+== Conclusion
+
+**metadata-grammar** enables systematic cartography of reality through data:
+
+1. **Create** phenomenal databases with explicit coverage boundaries
+2. **Mark** known blind spots (Zone 2) honestly
+3. **Acknowledge** unknown darkness (Zone 3) humbly
+4. **Register** with verisimdb to join the federation
+5. **Track** cartographic evolution as understanding improves
+6. **Guide** exploration into darkness to expand the white box
+
+We are cartographers of the digital age. The boxes are white. The territory is dark. Let's explore.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later

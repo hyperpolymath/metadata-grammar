@@ -1,22 +1,295 @@
-// SPDX-License-Identifier: PMPL-1.0-or-later
-= YOUR Template Repo Roadmap
+= Journey Grammar for Databases (JGD) - Roadmap
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:license: PMPL-1.0-or-later
 
-== Current Status
+== Vision
 
-Initial development phase.
+**Journey Grammar for Databases (JGD)** is the cartographic infrastructure for mapping reality through data. Successor to VoID, Dublin Core, and DCAT.
+
+**Core innovation**: The paradigm shift from black box obsession (interpretability) to white box in darkness (exploration of unmeasured reality).
 
 == Milestones
 
-=== v0.1.0 - Foundation
-* [ ] Core functionality
-* [ ] Basic documentation
-* [ ] CI/CD pipeline
+=== Phase 1: Formal Specification (Q1 2026) ✓ In Progress
 
-=== v1.0.0 - Stable Release
-* [ ] Full feature set
-* [ ] Comprehensive tests
-* [ ] Production ready
+**Goal**: Complete formal specification across multiple systems.
 
-== Future Directions
+[cols="1,3,1"]
+|===
+|Component |Description |Status
 
-_To be determined based on community feedback._
+|EBNF Grammar
+|Syntax for Turtle/JSON-LD serialization of JGD metadata
+|Not Started
+
+|Idris2 Types
+|Dependent types for D_p, D_n, homoiconic containers, metamorphic transforms
+|Not Started
+
+|Category Theory
+|Formal semantics for metamorphic transformations (functors, natural transformations)
+|Not Started
+
+|SHACL Shapes
+|Runtime validation shapes for core JGD metadata
+|Not Started
+
+|JSON-LD Context
+|Web-friendly context for jgd: namespace
+|Not Started
+
+|OWL Ontology
+|Reasoning support, homoiconic properties, D_p/D_n classification
+|Not Started
+
+|Philosophical Docs
+|PHILOSOPHY.adoc, VISION-BLINDSPOT.adoc, CARTOGRAPHY.adoc
+|✓ Complete
+
+|Crosswalk Tables
+|Mappings to VoID, Dublin Core, DCAT
+|Not Started
+|===
+
+=== Phase 2: Homoiconic Container Model (Q2 2026)
+
+**Goal**: Implement storage containers as self-describing D_p instances.
+
+[cols="1,3"]
+|===
+|Component |Description
+
+|jgd:StorageContainer
+|Abstract type for storage systems (verisimdb, SQL, RDF, Graph)
+
+|Self-Description API
+|Containers describe their own structure using JGD
+
+|Reflection API
+|Containers examine and modify their structure
+
+|Container Metadata
+|Schema, indexes, storage format described in same grammar as contents
+
+|verisimdb Implementation
+|verisimdb as homoiconic D_p container
+
+|Example Containers
+|Reference implementations: RDF triplestore, SQL DB, property graph
+|===
+
+=== Phase 3: Metamorphic Library (Q3 2026)
+
+**Goal**: Enable provable transformations between representations.
+
+[cols="1,3"]
+|===
+|Component |Description
+
+|Transformation Catalog
+|Valid transforms: RDF ↔ JSON-LD ↔ Graph ↔ SQL ↔ Document
+
+|Invariant Proofs
+|Idris2 proofs that transformations preserve semantics, provenance, coverage
+
+|Transform API
+|Functional API for metamorphic operations
+
+|Metamorphic History
+|Track container/data transformations over time
+
+|Round-Trip Tests
+|Validation that A → B → A preserves data
+
+|Performance Benchmarks
+|Measure transformation overhead
+|===
+
+=== Phase 4: Integration Ecosystem (Q4 2026)
+
+**Goal**: Integrate with verisimdb, a2ml, k9-svc.
+
+[cols="1,3"]
+|===
+|Component |Description
+
+|verisimdb Atlas
+|Deploy verisimdb as cartographic index for D_p federation
+
+|a2ml Compilation
+|Compile JGD specs to SHACL, JSON Schema, ML models
+
+|k9-svc Routing
+|MIME type handling: application/vnd.jgd+turtle, +jsonld, +xml
+
+|SPARQL Endpoint
+|Temporal queries: "What did we know on 2020-01-01?"
+
+|D_p Discovery
+|Query for coverage gaps, blind spots, exploration priorities
+
+|Federation Protocol
+|How D_p instances register with atlas, discover each other
+|===
+
+=== Phase 5: Tooling & Libraries (Q1 2027)
+
+**Goal**: Production-ready tools for JGD creation and validation.
+
+[cols="1,3"]
+|===
+|Component |Description
+
+|Zig FFI Library
+|C ABI validation library (homoiconic container implementation)
+
+|Rust CLI
+|Command-line tool: create D_p, validate, transform, query atlas
+
+|ReScript Web UI
+|Browser-based metadata creation, visualization
+
+|Julia Batch Scripts
+|Convert VoID/DC/DCAT to JGD at scale
+
+|Python Bindings
+|JGD library for Python data science ecosystem
+
+|JavaScript SDK
+|JGD for web applications (via Deno)
+|===
+
+=== Phase 6: Documentation & Community (Q2 2027)
+
+**Goal**: Comprehensive documentation, examples, community engagement.
+
+[cols="1,3"]
+|===
+|Component |Description
+
+|Specification Site
+|Jekyll/AsciiDoc site with full JGD spec
+
+|Tutorial Series
+|Step-by-step guides for different domains (climate, genomics, social)
+
+|Example Datasets
+|Reference D_p instances across domains
+
+|Video Explainers
+|Philosophical framework, technical tutorials
+
+|Academic Paper
+|Formal publication of JGD theory and paradigm shift
+
+|Community Forum
+|Discussions, questions, contributions
+|===
+
+== Key Deliverables by Year
+
+=== 2026
+
+* ✓ Philosophical framework documented
+* ✓ D_p/D_n classification defined
+* [ ] Complete formal specification (EBNF, Idris2, Category Theory)
+* [ ] Homoiconic container model implemented
+* [ ] Metamorphic transformation library
+* [ ] verisimdb integration operational
+* [ ] First production D_p instances
+
+=== 2027
+
+* [ ] Full tooling suite (Zig, Rust, ReScript, Julia)
+* [ ] Language bindings (Python, JavaScript)
+* [ ] Comprehensive documentation
+* [ ] Academic publication
+* [ ] Community adoption begins
+* [ ] Legacy migration path (VoID/DC/DCAT → JGD)
+
+=== 2028+
+
+* [ ] Widespread adoption as VoID successor
+* [ ] Standard for data catalogs and federations
+* [ ] Integration with major semantic web platforms
+* [ ] Global D_p atlas (millions of databases indexed)
+* [ ] Measurable expansion of "white box" coverage
+
+== Success Metrics
+
+=== Technical
+
+* **JGD adoption**: >1000 D_p instances created
+* **Atlas size**: >100,000 databases indexed in verisimdb
+* **Coverage expansion**: White box grows from 15% → 25%
+* **Blind spots identified**: >10,000 Zone 2 gaps cataloged
+* **Transformations**: Round-trip tests pass 100%
+
+=== Community
+
+* **Contributors**: >50 active contributors
+* **Organizations**: >10 institutions using JGD
+* **Papers**: >5 academic citations
+* **Talks**: Presented at Semantic Web, Data Science conferences
+* **Forks**: >100 GitHub forks
+
+=== Impact
+
+* **Paradigm shift**: Data science discourse shifts from interpretability to exploration
+* **Research prioritization**: Funding guided by JGD blind spot analysis
+* **Data collection**: New sensors/instruments deployed based on coverage gaps
+* **Epistemic humility**: Standard practice to acknowledge unknown unknowns
+
+== Dependencies & Risks
+
+=== Dependencies
+
+* **verisimdb maturity**: Requires stable temporal versioning
+* **Idris2 ecosystem**: Needs mature dependent types tooling
+* **Category theory expertise**: Requires mathematical rigor
+* **Community buy-in**: Adoption depends on demonstrating value
+
+=== Risks
+
+[cols="1,2,2"]
+|===
+|Risk |Impact |Mitigation
+
+|Complexity barrier
+|Users find JGD too complex vs VoID
+|Excellent documentation, gradual migration path, tooling
+
+|Ecosystem fragmentation
+|Competing standards emerge
+|Clear value proposition, reference implementations
+
+|verisimdb bottleneck
+|Atlas becomes single point of failure
+|Federation protocol allows multiple atlases
+
+|Unknown unknowns underestimated
+|Zone 3 larger than 60%
+|Explicitly acknowledge uncertainty, revise estimates
+
+|Category theory expertise scarce
+|Metamorphic transforms incomplete
+|Partner with academic researchers
+|===
+
+== Contributing
+
+See link:CONTRIBUTING.md[CONTRIBUTING.md] for how to contribute to JGD development.
+
+**Key areas needing expertise**:
+* Category theory (metamorphic transformations)
+* Dependent types (Idris2 implementation)
+* Semantic web (RDF, SPARQL, OWL)
+* Data science (blind spot identification, coverage metrics)
+* Technical writing (documentation, tutorials)
+
+== License
+
+This roadmap is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later

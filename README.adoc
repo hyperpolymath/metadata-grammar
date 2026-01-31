@@ -5,14 +5,42 @@
 image:https://img.shields.io/badge/license-PMPL--1.0--or--later-indigo[License]
 image:https://img.shields.io/badge/status-proof--of--concept-yellow[Status]
 
-**A formal, integrated metadata framework succeeding VoID, Dublin Core, and DCAT**
+**Cartographic infrastructure for mapping reality through data**
+
+[quote]
+____
+Stop obsessing over the black box. Our databases are white—we built them, we can inspect them.
+
+The blackness is outside. The unexplored territory. The darkness beyond our maps.
+
+We are cartographers stepping into darkness, progressively mapping reality.
+____
+
+== The Paradigm Shift
+
+For two decades, we've worried about "black box" AI and opaque systems. **We've been looking in the wrong direction.**
+
+**The inversion**:
+- Our boxes are **transparent** (we built the databases, models, systems)
+- Reality is **dark** (unmeasured domains, blind spots, unknown unknowns)
+- The question isn't "How does this model work?" but **"What haven't we measured?"**
+- Not "Is the cat dead or alive?" but **"Are there cats beyond?"**
+
+**metadata-grammar** is the cartographic standard for exploring this darkness:
+
+- Catalog the **white box** (phenomenal databases we've built)
+- Mark the **edges** (coverage boundaries, blind spots)
+- Acknowledge the **darkness** (epistemic humility about the unknown)
+- Guide **exploration** (where to step into darkness next)
+
+**See link:PHILOSOPHY.adoc[PHILOSOPHY.adoc] for the complete framework.**
 
 == What is Metadata Grammar?
 
 Metadata Grammar goes beyond vocabulary to provide a **compositional grammar** for dataset metadata:
 
 - **Vocabulary**: Terms and definitions (what VoID/Dublin Core provide)
-- **Grammar**: Vocabulary + syntax + composition rules + validation + formal semantics
+- **Grammar**: Vocabulary + syntax + composition rules + validation + formal semantics + cartographic guidance
 
 === Key Features
 

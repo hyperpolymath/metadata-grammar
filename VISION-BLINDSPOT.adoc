@@ -1,0 +1,95 @@
+= The Vision Blind Spot: Where We've Been Looking
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:license: PMPL-1.0-or-later
+
+== The Two Blind Spots
+
+A paper in _Nature_ pointed out something profound about vision: We obsess over the **small blind spot**—the tiny area where the optic nerve connects to the retina. About 7.5° of visual field.
+
+But there's a **much larger blind spot** we rarely think about: **Everything behind the front of our eyes.** The entire world behind us. Roughly 50% of the visual field—the world we cannot see at all without turning our heads.
+
+== The Analogy to Data
+
+=== The Small Blind Spot: Black Box Obsession
+
+**What we've been obsessing over**: The "black box" problem in AI and data systems.
+
+- Can we interpret this neural network?
+- What's inside this opaque model?
+- How do we explain this algorithm?
+
+**Size of the problem**: Small. We built these systems. We can inspect them with effort.
+
+**Equivalent to**: The optic nerve blind spot—a known, measurable gap we can work around.
+
+=== The Huge Blind Spot: The Unseen World
+
+**What we've been ignoring**: The unmeasured, unobserved reality beyond our data.
+
+- What domains haven't we measured?
+- What populations aren't in our datasets?
+- What phenomena lack instrumentation?
+- What's beyond the edge of our maps?
+
+**Size of the problem**: VAST. Most of reality is unmeasured.
+
+**Equivalent to**: The world behind us—the huge area we can't see without turning to look.
+
+== The Inversion
+
+**We've been staring at the optic nerve** (the small blind spot, the "black box") while **the entire world behind us remains unexplored** (the huge blind spot, the darkness).
+
+**metadata-grammar** is about turning around. Looking at the darkness. Mapping the unknown.
+
+== Why This Isn't Just "We Don't Know Everything"
+
+**Expected objection**: "Of course we don't know everything. So what?"
+
+**The point**: Not that we're incomplete. But that **we've been looking in the wrong direction.**
+
+We've spent two decades obsessing over:
+- Interpretability (understand the black box)
+- Explainability (explain the optic nerve)
+- Model inspection (stare at the small blind spot)
+
+When we should have been asking:
+- **Where haven't we looked?** (turn around)
+- **What's in the darkness?** (explore the unknown)
+- **Where are the blank spots?** (cartographic gaps)
+
+**The paradigm shift**: From understanding our tools → exploring the territory.
+
+== The Chronicle Aspect
+
+**"Interlinked" is now redundant**: If everything is a database in the federation, interlinking is **inherent**, not special.
+
+What metadata-grammar really captures is the **evolving chronicle**:
+- How our knowledge grows over time
+- How our maps improve as we explore
+- How we catalogue the evolution of understanding
+- The journal of our progressive cartography
+
+**Not just**: "Grammar of Databases" (static rules)
+
+**But**: "Cartographic Journal of Reality" (evolving chronicle)
+
+verisimdb makes this temporal: We can query "What did we know on 2020-01-01?" and see our maps at that time. The chronicle is queryable.
+
+== For Communication
+
+**The core message for sharing this work**:
+
+> We've been obsessing over the tiny blind spot (interpretability, black boxes) while ignoring the vast blind spot (unmeasured reality).
+>
+> Our databases are transparent—we built them. The darkness is outside.
+>
+> **metadata-grammar** is the cartographic standard for exploring that darkness. A chronicle of our progressive mapping of reality through phenomenal databases.
+>
+> The boxes are white. The territory is dark. Let's turn around and explore.
+
+== License
+
+This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later

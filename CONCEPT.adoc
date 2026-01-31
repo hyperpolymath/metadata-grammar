@@ -34,6 +34,66 @@ A grammar defines:
 - Transformation rules (crosswalks, migrations)
 - Formal semantics (provable properties)
 
+== The Paradigm Shift: White Box in Darkness
+
+NOTE: See link:PHILOSOPHY.adoc[PHILOSOPHY.adoc] for the complete philosophical framework.
+
+=== The Inversion
+
+For two decades, we've obsessed over the "black box problem"—how to interpret opaque ML models and complex systems. **We've been looking in the wrong direction.**
+
+**Our boxes are white.** We built our databases, models, and systems. We can inspect them. They're not mysterious black boxes—they're transparent artifacts.
+
+**The blackness is outside.** The noumenal database—reality itself—is what we cannot see. The unexplored territory is where the mystery lies.
+
+=== From "Is the cat dead or alive?" to "Are there cats beyond?"
+
+**Schrödinger's question** (inside the box): What's the state of this quantum system?
+
+**Our question** (beyond the box): What exists in unexplored reality? What domains haven't we measured? Where are the blank spots on our maps?
+
+=== The Three Zones of Reality
+
+**Zone 1: The White Box (~15% coverage)**
+- Our phenomenal databases—observed, measured, mapped
+- Transparent, inspectable, schema-defined
+- "Here be data"
+
+**Zone 2: Known Darkness (~25% coverage)**
+- Domains we know exist but haven't measured
+- Spatial/temporal gaps, sampling biases, known blind spots
+- "Here be dragons" (we know the gaps exist)
+
+**Zone 3: Unknown Darkness (~60% coverage)**
+- Domains we don't even know to look for
+- Phenomena we lack instruments to detect
+- Unknown unknowns, epistemic darkness
+- "Here be... we don't know what"
+
+=== The Cartographic Paradigm
+
+**verisimdb**: The cartographic index (atlas)
+- Indexes phenomenal databases (map of maps)
+- Tracks spatiotemporal coverage boundaries
+- Maps relationships and lineage
+- Coordinates the federation of databases
+- Guides exploration into the darkness
+
+**Phenomenal databases**: Autonomous observations (the maps)
+- Individual datasets distributed across institutions
+- Each a partial, perspective-bound view of reality
+- Registered with verisimdb, indexed by coverage
+- The federation we navigate and compose
+
+**metadata-grammar**: The cartographic standard
+- How to create maps (describe phenomenal databases)
+- How to register with the atlas (join the federation)
+- How to express coverage and blind spots
+- How to track provenance and evolution
+- How to guide exploration of the unknown
+
+**We are cartographers of the digital age**, progressively mapping reality by stepping into darkness.
+
 == Architecture
 
 === Layer 1: Core Metadata (replaces DC + VoID core)
@@ -65,31 +125,89 @@ mg:license, mg:rights, mg:provenance, mg:governance
 - Bioschemas (life sciences)
 - Crosswalks to legacy vocabularies (VoID, Dublin Core, DCAT)
 
-== Integration with verisimdb
+== Integration with verisimdb: The Cartographic Index
 
-**verisimdb** (versioned semantic database) provides:
-- Temporal versioning of RDF graphs
-- Immutable history with git-like semantics
-- Query across time (point-in-time, temporal range)
+**verisimdb** serves as the **atlas** that coordinates exploration of reality.
 
-**Metadata Grammar integration**:
-- Dataset metadata stored in verisimdb
-- Provenance tracked automatically via verisimdb versioning
-- Grammar rules enforced via SHACL shapes in verisimdb
-- Validation history preserved (know when metadata became compliant)
+=== verisimdb as Cartographic Infrastructure
+
+**Core capabilities**:
+- **Temporal versioning**: Track how our maps evolve as we understand reality better
+- **Immutable history**: Preserve full provenance of observations
+- **Spatiotemporal indexing**: Map coverage boundaries and blind spots
+- **Federation coordination**: Enable discovery and composition of autonomous databases
+
+**Cartographic functions**:
+- **Index the white box**: Catalog all phenomenal databases (what we've mapped)
+- **Mark known darkness**: Track identified blind spots and gaps (Zone 2)
+- **Acknowledge unknown darkness**: Epistemic humility about Zone 3
+- **Guide exploration**: Prioritize which darkness to explore next
+- **Track cartographic evolution**: "Our 2025 map corrected errors from 2020"
+
+=== Metadata Grammar + verisimdb Integration
+
+**How they work together**:
+
+1. **metadata-grammar** defines the cartographic standard (how to create maps)
+2. **verisimdb** implements the atlas infrastructure (indexes the maps)
+3. **Phenomenal databases** register with verisimdb using metadata-grammar specs
+4. **The federation** grows as we explore and map new domains
 
 [source,turtle]
 ----
 @prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
 @prefix vsim: <https://hyperpolymath.org/ns/verisimdb#> .
 
-:MyDataset a mg:Dataset ;
-    vsim:stored-in :MyVerisimDBInstance ;
-    vsim:version-history :MyDataset-History ;
-    mg:title "Example Dataset" ;
-    mg:modified "2026-01-31"^^xsd:date ;
+# The cartographic index (atlas)
+:GlobalAtlas a vsim:VerisimDatabase, mg:CartographicIndex ;
+    # Tracks exploration state
+    mg:whiteBoxCoverage 0.15 ;
+    mg:knownDarknessCoverage 0.25 ;
+    mg:unknownDarknessCoverage 0.60 ;
+
+    # Indexes the federation
+    mg:federationSize 1500000 ;
+    mg:indexesDatabases :ClimateDB, :EconomicDB, :GenomicDB, ... .
+
+# A phenomenal database in the federation
+:ClimateDB a mg:PhenomenalDatabase ;
+    # What it observes (what territory it maps)
+    mg:observes mg-domain:GlobalClimate ;
+    mg:perspective "satellite-temperature-measurements" ;
+
+    # Spatiotemporal coverage (edge of white box)
+    mg:spatialCoverage :NorthernHemisphere ;
+    mg:temporalCoverage "1980-2025" ;
+
+    # Known blind spots (darkness we're aware of)
+    mg:knownBlindSpots [
+        mg:spatial :SouthernOceans ;
+        mg:temporal "pre-1980"
+    ] ;
+
+    # Registration with atlas
+    mg:registeredIn :GlobalAtlas ;
+    vsim:indexedBy :GlobalAtlas ;
+    vsim:version-history :ClimateDB-History ;
+
+    # Validation
     mg:validates-against :MetadataGrammarShapes ;
     mg:validation-status mg:Valid .
+
+# Cartographic evolution tracked by verisimdb
+:ClimateDB-History a vsim:VersionHistory ;
+    vsim:snapshots [
+        :ClimateDB_v2020,  # Our understanding in 2020
+        :ClimateDB_v2025   # Improved cartography in 2025
+    ] .
+
+:ClimateDB_v2025
+    mg:supersedes :ClimateDB_v2020 ;
+    mg:improvements [
+        mg:blindSpotsFilled :ArcticRegion ;
+        mg:uncertaintyReduced 0.10 ;
+        mg:resolutionImproved "1km → 500m"
+    ] .
 ----
 
 == Formal Specification
