@@ -1,0 +1,98 @@
+= Metadata Grammar
+:toc:
+:license: PMPL-1.0-or-later
+
+image:https://img.shields.io/badge/license-PMPL--1.0--or--later-indigo[License]
+image:https://img.shields.io/badge/status-proof--of--concept-yellow[Status]
+
+**A formal, integrated metadata framework succeeding VoID, Dublin Core, and DCAT**
+
+== What is Metadata Grammar?
+
+Metadata Grammar goes beyond vocabulary to provide a **compositional grammar** for dataset metadata:
+
+- **Vocabulary**: Terms and definitions (what VoID/Dublin Core provide)
+- **Grammar**: Vocabulary + syntax + composition rules + validation + formal semantics
+
+=== Key Features
+
+✓ **Unified framework** - Integrates VoID (technical), Dublin Core (descriptive), DCAT (catalog)
+✓ **Formal semantics** - Idris2 dependent types prove metadata properties
+✓ **Modern concerns** - Data ethics, AI/ML metadata, sustainability, privacy
+✓ **verisimdb integration** - Temporal versioning, immutable history, validation tracking
+✓ **Multi-format** - RDF/Turtle, JSON-LD, JSON Schema
+✓ **Legacy compatibility** - Automatic crosswalks to VoID/DC/DCAT
+
+== Quick Start
+
+See link:CONCEPT.adoc[CONCEPT.adoc] for the full specification.
+
+=== Example
+
+[source,turtle]
+----
+@prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
+
+:MyDataset a mg:Dataset ;
+    mg:title "Example Dataset" ;
+    mg:creator :JonathanJewell ;
+    mg:tripleCount 1000000 ;
+    mg:sparqlEndpoint <https://example.org/sparql> ;
+    mg:validates-against :CoreShapes ;
+    mg:validation-status mg:Valid .
+----
+
+== Architecture
+
+[source]
+----
+Layer 1: Core Metadata (descriptive, technical, administrative)
+Layer 2: Domain Extensions (scientific, cultural, geospatial, AI/ML, sustainability)
+Layer 3: Interoperability (Schema.org, DCAT-AP, Bioschemas, legacy crosswalks)
+----
+
+== Integration with verisimdb
+
+**verisimdb** provides temporal versioning for RDF graphs. Metadata Grammar integrates:
+
+- Dataset metadata stored in verisimdb
+- Provenance tracked via versioning
+- Grammar rules enforced via SHACL
+- Validation history preserved
+
+== Implementation Roadmap
+
+**Phase 1: Core Specification** (current)
+- Idris2 formal grammar
+- SHACL validation shapes
+- JSON-LD context
+- OWL ontology
+
+**Phase 2: Tooling**
+- Zig FFI validation library
+- ReScript web UI
+- Julia conversion scripts
+- Rust CLI
+
+**Phase 3: Integration**
+- verisimdb backend
+- SPARQL endpoint
+- CI/CD validation
+- Documentation site
+
+== Related Projects
+
+- **verisimdb**: Versioned semantic database (temporal RDF)
+- **VoID**: Vocabulary of Interlinked Datasets
+- **Dublin Core**: Resource metadata standard
+- **DCAT**: Data Catalog Vocabulary
+
+== License
+
+Licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later
+
+== Author
+
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>

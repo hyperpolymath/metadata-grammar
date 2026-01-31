@@ -1,0 +1,220 @@
+= Metadata Grammar: Integrated Successor to VoID, Dublin Core, and DCAT
+Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+:toc:
+:license: PMPL-1.0-or-later
+
+== Overview
+
+**Metadata Grammar** is a formal, integrated metadata framework that succeeds and unifies:
+
+- **VoID** (Vocabulary of Interlinked Datasets) - technical dataset metadata
+- **Dublin Core** - descriptive resource metadata
+- **DCAT** (Data Catalog Vocabulary) - catalog and distribution metadata
+
+Unlike these predecessors which overlap without clean integration, Metadata Grammar provides a **compositional grammar** - not just vocabulary, but syntax and rules for metadata composition, validation, and transformation.
+
+== Motivation
+
+=== Current Pain Points
+
+1. **Overlapping vocabularies**: VoID, DCAT, Dublin Core overlap but don't align perfectly
+2. **Missing modern concerns**: Data ethics, privacy, AI/ML metadata, sustainability
+3. **Format fragmentation**: RDF-centric, not friendly to JSON-LD/JSON Schema users
+4. **Governance unclear**: Multiple W3C/DCMI/community efforts
+5. **No formal semantics**: Vocabularies lack formal grammars and composition rules
+
+=== Why "Grammar" not "Vocabulary"
+
+- **Vocabulary** = terms and their definitions
+- **Grammar** = vocabulary + syntax + composition rules + validation
+
+A grammar defines:
+- How to compose metadata (syntax trees)
+- Validation rules (well-formedness)
+- Transformation rules (crosswalks, migrations)
+- Formal semantics (provable properties)
+
+== Architecture
+
+=== Layer 1: Core Metadata (replaces DC + VoID core)
+
+[source,turtle]
+----
+# Descriptive metadata
+mg:title, mg:description, mg:keywords, mg:themes
+
+# Technical metadata
+mg:format, mg:size, mg:structure, mg:accessMethods
+
+# Administrative metadata
+mg:license, mg:rights, mg:provenance, mg:governance
+----
+
+=== Layer 2: Domain Extensions (modular)
+
+- **Scientific**: methodology, instruments, variables
+- **Cultural**: GLAM metadata (Europeana, CIDOC-CRM)
+- **Geospatial**: GeoSPARQL, WGS84
+- **AI/ML**: training data, model metadata, bias documentation
+- **Sustainability**: carbon footprint, data retention policies
+
+=== Layer 3: Interoperability Bridges
+
+- Schema.org alignment (for SEO/discoverability)
+- DCAT-AP (EU standards compliance)
+- Bioschemas (life sciences)
+- Crosswalks to legacy vocabularies (VoID, Dublin Core, DCAT)
+
+== Integration with verisimdb
+
+**verisimdb** (versioned semantic database) provides:
+- Temporal versioning of RDF graphs
+- Immutable history with git-like semantics
+- Query across time (point-in-time, temporal range)
+
+**Metadata Grammar integration**:
+- Dataset metadata stored in verisimdb
+- Provenance tracked automatically via verisimdb versioning
+- Grammar rules enforced via SHACL shapes in verisimdb
+- Validation history preserved (know when metadata became compliant)
+
+[source,turtle]
+----
+@prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
+@prefix vsim: <https://hyperpolymath.org/ns/verisimdb#> .
+
+:MyDataset a mg:Dataset ;
+    vsim:stored-in :MyVerisimDBInstance ;
+    vsim:version-history :MyDataset-History ;
+    mg:title "Example Dataset" ;
+    mg:modified "2026-01-31"^^xsd:date ;
+    mg:validates-against :MetadataGrammarShapes ;
+    mg:validation-status mg:Valid .
+----
+
+== Formal Specification
+
+=== Idris2 Type System
+
+Metadata Grammar uses **Idris2 dependent types** to prove metadata properties:
+
+[source,idris]
+----
+-- Metadata must have title (non-empty string)
+record Dataset where
+  constructor MkDataset
+  title : String
+  {auto 0 nonEmpty : So (length title > 0)}
+  created : ISO8601Date
+  modified : ISO8601Date
+  {auto 0 modifiedAfterCreated : LTE created modified}
+----
+
+=== SHACL Validation
+
+Runtime validation via SHACL shapes:
+
+[source,turtle]
+----
+:DatasetShape a sh:NodeShape ;
+    sh:targetClass mg:Dataset ;
+    sh:property [
+        sh:path mg:title ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:minLength 1 ;
+    ] ;
+    sh:property [
+        sh:path mg:modified ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:date ;
+    ] .
+----
+
+== Example: Integrated Metadata
+
+[source,turtle]
+----
+@prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# Native Metadata Grammar (preferred)
+:MyDataset a mg:Dataset ;
+    # Core descriptive
+    mg:title "Example Linked Dataset" ;
+    mg:description "Proof-of-concept integrated dataset" ;
+    mg:creator :JonathanJewell ;
+    mg:created "2026-01-31"^^xsd:date ;
+    mg:modified "2026-01-31"^^xsd:date ;
+    mg:license <https://spdx.org/licenses/PMPL-1.0-or-later> ;
+
+    # Technical metadata
+    mg:tripleCount 1000000 ;
+    mg:entityCount 50000 ;
+    mg:sparqlEndpoint <https://example.org/sparql> ;
+    mg:dataDump <https://example.org/dump.nt.gz> ;
+
+    # Provenance
+    mg:wasGeneratedBy :DataGenerationActivity ;
+    mg:wasAttributedTo :JonathanJewell ;
+
+    # Distribution
+    mg:distribution :RDF-Distribution, :CSV-Distribution ;
+
+    # Validation
+    mg:validates-against :MetadataGrammarCoreShapes ;
+    mg:validation-status mg:Valid ;
+    mg:last-validated "2026-01-31T12:00:00Z"^^xsd:dateTime .
+
+# Legacy compatibility (automatic crosswalk)
+:MyDataset
+    # Dublin Core mapping
+    dcterms:title "Example Linked Dataset" ;
+    dcterms:creator :JonathanJewell ;
+
+    # VoID mapping
+    void:triples 1000000 ;
+    void:sparqlEndpoint <https://example.org/sparql> ;
+
+    # DCAT mapping
+    dcat:distribution :RDF-Distribution .
+----
+
+== Implementation Plan
+
+=== Phase 1: Core Specification (Proof of Concept)
+- [ ] Idris2 formal grammar definition
+- [ ] SHACL shapes for validation
+- [ ] JSON-LD context
+- [ ] OWL ontology
+- [ ] Crosswalks to VoID/DC/DCAT
+
+=== Phase 2: Tooling
+- [ ] Zig FFI for validation (C ABI)
+- [ ] ReScript web UI for metadata creation
+- [ ] Julia batch conversion scripts
+- [ ] Rust CLI for metadata operations
+
+=== Phase 3: Integration
+- [ ] verisimdb storage backend
+- [ ] SPARQL endpoint with temporal queries
+- [ ] GitHub Actions workflow for metadata validation
+- [ ] Documentation site (AsciiDoc + Jekyll)
+
+== Related Work
+
+- **VoID**: http://rdfs.org/ns/void
+- **Dublin Core**: http://purl.org/dc/terms/
+- **DCAT**: http://www.w3.org/ns/dcat
+- **PROV-O**: http://www.w3.org/ns/prov
+- **Schema.org**: https://schema.org
+- **verisimdb**: https://github.com/hyperpolymath/verisimdb
+
+== License
+
+This specification is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+
+SPDX-License-Identifier: PMPL-1.0-or-later
