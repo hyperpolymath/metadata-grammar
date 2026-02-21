@@ -258,3 +258,8 @@ SPDX-License-Identifier: PMPL-1.0-or-later
 == Author
 
 Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+
+
+== Architecture
+
+See link:TOPOLOGY.md[TOPOLOGY.md] for a visual architecture map and completion dashboard.
