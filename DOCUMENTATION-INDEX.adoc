@@ -1,5 +1,5 @@
 = Journey Grammar for Databases - Documentation Index
-Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
 :license: PMPL-1.0-or-later
 
@@ -261,7 +261,7 @@ Roadmap provides complete plan. Implementation to follow.
 All documentation follows these standards:
 
 ✓ **SPDX headers**: All files have `SPDX-License-Identifier: PMPL-1.0-or-later`
-✓ **Author attribution**: Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+✓ **Author attribution**: Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 ✓ **Cross-references**: Documents link to each other appropriately
 ✓ **AsciiDoc format**: Consistent formatting, table of contents where appropriate
 ✓ **Terminology consistency**: D_p, D_n, JGD, verisimdb, Zone 1/2/3 used consistently

@@ -1,5 +1,5 @@
 = The Vision Blind Spot: Where We've Been Looking
-Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
 :license: PMPL-1.0-or-later
 

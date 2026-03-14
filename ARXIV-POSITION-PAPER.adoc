@@ -1,5 +1,5 @@
 = Journey Grammar for Databases: A Position Paper on Exploratory Data Cartography
-Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
+Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -796,7 +796,7 @@ Required: ~0.4% annual growth
 - **verisimdb**: Temporal database integration
 - **Technical writing**: Documentation, tutorials, examples
 
-**Contact**: jonathan.jewell@open.ac.uk
+**Contact**: j.d.a.jewell@open.ac.uk
 
 **Repository**: https://github.com/hyperpolymath/metadata-grammar
 

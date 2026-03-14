@@ -1,23 +1,23 @@
 ;; SPDX-License-Identifier: PMPL-1.0-or-later
-;; STATE.scm - Project state for rsr-template-repo
+;; STATE.scm - Project state for metadata-grammar
 
 (state
   (metadata
     (version "0.1.0")
     (schema-version "1.0")
     (created "2024-06-01")
-    (updated "2025-01-17")
-    (project "rsr-template-repo")
-    (repo "hyperpolymath/rsr-template-repo"))
+    (updated "2026-03-14")
+    (project "metadata-grammar")
+    (repo "hyperpolymath/metadata-grammar"))
 
   (project-context
-    (name "RSR Template Repo")
-    (tagline "Template repository following Rhodium Standard Repository specification")
-    (tech-stack ("template")))
+    (name "metadata-grammar")
+    (tagline "Formal grammar for structured metadata")
+    (tech-stack ("grammar" "metadata")))
 
   (current-position
-    (phase "stable")
-    (overall-completion 90)
+    (phase "active")
+    (overall-completion 50)
     (working-features
-      ("RSR compliance structure"
-       "Template files"))))
+      ("Grammar definitions"
+       "Metadata parsing"))))

@@ -1,34 +1,34 @@
-= RSR-template-repo - Citation Guide
+= metadata-grammar - Citation Guide
 :toc:
 
 == BibTeX
 
 [source,bibtex]
 ----
-@software{rsr-template-repo_2025,
-  author = {Polymath, Hyper},
-  title = {RSR-template-repo},
-  year = {2025},
-  url = {https://github.com/hyperpolymath/RSR-template-repo},
-  license = {AGPL-3.0-or-later}
+@software{metadata-grammar_2026,
+  author = {Jewell, Jonathan D.A.},
+  title = {metadata-grammar},
+  year = {2026},
+  url = {https://github.com/hyperpolymath/metadata-grammar},
+  license = {PMPL-1.0-or-later}
 }
 ----
 
 == Harvard Style
 
-Polymath, H. (2025) _RSR-template-repo_ [Computer software]. Available at: https://github.com/hyperpolymath/RSR-template-repo
+Jewell, J. D. A. (2026) _metadata-grammar_ [Computer software]. Available at: https://github.com/hyperpolymath/metadata-grammar
 
 == OSCOLA
 
-Hyper Polymath, 'RSR-template-repo' (2025) <https://github.com/hyperpolymath/RSR-template-repo>
+Jonathan D.A. Jewell, 'metadata-grammar' (2026) <https://github.com/hyperpolymath/metadata-grammar>
 
 == MLA
 
-Polymath, Hyper. "RSR-template-repo." 2025, github.com/hyperpolymath/RSR-template-repo.
+Jewell, Jonathan D.A. "metadata-grammar." 2026, github.com/hyperpolymath/metadata-grammar.
 
 == APA 7
 
-Polymath, H. (2025). _RSR-template-repo_ [Computer software]. GitHub. https://github.com/hyperpolymath/RSR-template-repo
+Jewell, J. D. A. (2026). _metadata-grammar_ [Computer software]. GitHub. https://github.com/hyperpolymath/metadata-grammar
 
 == See Also
 
