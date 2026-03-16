@@ -201,9 +201,9 @@ See link:BACKENDS.adoc[BACKENDS.adoc] for storage independence details.
 - link:ARXIV-RELATED-WORK.adoc[ARXIV-RELATED-WORK.adoc] - Related work section (cartography, philosophy, databases)
 
 **Project Metadata** (.machine_readable/6scm/):
-- link:STATE.scm[STATE.scm] - Current project state, progress, tasks
-- link:ECOSYSTEM.scm[ECOSYSTEM.scm] - Relationships to other projects
-- link:META.scm[META.scm] - Architectural decisions, philosophy, governance
+- link:.machine_readable/6a2/STATE.a2ml[.machine_readable/6a2/STATE.a2ml] - Current project state, progress, tasks
+- link:.machine_readable/6a2/ECOSYSTEM.a2ml[.machine_readable/6a2/ECOSYSTEM.a2ml] - Relationships to other projects
+- link:.machine_readable/6a2/META.a2ml[.machine_readable/6a2/META.a2ml] - Architectural decisions, philosophy, governance
 
 == Roadmap
 
