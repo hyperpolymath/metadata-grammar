@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
+# Clade declaration — part of the gv-clade-index registry
+# See: https://github.com/hyperpolymath/gv-clade-index
+
+[identity]
+uuid = "e7ba1ab4-3f37-502b-87aa-0d538d298932"
+primary-forge = "github"
+primary-owner = "hyperpolymath"
+canonical-name = "metadata-grammar"
+prefixed-name = "nl-metadata-grammar"
+
+[clade]
+primary = "nl"
+secondary = ["gv"]
+assigned = "2026-03-16"
+rationale = ""
+
+[forges]
+github = "hyperpolymath/metadata-grammar"
+gitlab = "hyperpolymath/metadata-grammar"
+bitbucket = "hyperpolymath/metadata-grammar"
+
+[lineage]
+type = "standalone"
+parent = "Grammar definitions for metadata formats"
+born = "2026-03-16"
