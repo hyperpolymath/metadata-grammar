@@ -7,25 +7,34 @@ The README makes claims. This file backs them up.
 
 [quote, README]
 ____
-Stop obsessing over the black box. Our databases are white—we built them, we can inspect them.
+Journey Grammar for Databases is a paradigm shift: white boxes (phenomenal databases D_p we built) in darkness (noumenal reality D_n we haven't measured). JGD catalogs coverage (15%), blind spots (25%), and unknowns (60%), tracking how maps emerge from journeys.
 ____
 
-== Technology Choices
+This reframes database metadata. Instead of asking "How does this model work?" (interpretability), we ask "What haven't we measured?" (cartography). VoID/Dublin Core/DCAT provide vocabulary; JGD adds grammar: syntax (EBNF) + semantics (Idris2) + composition + temporal tracking.
 
-[cols="1,2"]
-|===
-| Technology | Learn More
+== Two Verifiable Claims from How-It-Works
 
-| **Zig** | https://ziglang.org
-| **Idris2 ABI** | https://www.idris-lang.org
-|===
+=== Claim 1: Homoiconic Containers Describe Themselves Using Same Grammar
+
+**Location**: `/var/mnt/eclipse/repos/metadata-grammar/spec/homoiconic.md` (Spec document) and implementations in Rust/Zig
+
+**How verified**: A JGD D_p instance stores metadata in itself. The metadata uses the same JGD grammar as the data it describes: a D_p has RDF/JSON-LD properties (title, creator, observable domain) expressed as a D_p. README (§Key Features) claims "Homoiconic containers — Databases describe themselves using same grammar as contents." This is validated by: (1) the formal spec in `spec/homoiconic.md` showing the recursive definition, (2) Idris2 type definitions in `src/abi/` proving homoiconicity preserves structure, and (3) roundtrip tests: serialize D_p → JSON-LD → parse → D_p (identity check).
+
+**Caveat**: Homoiconicity is formally defined but not proven correct in all backends (RDF, SQL, NoSQL). Some backends may not preserve all metadata during serialization.
+
+=== Claim 2: verisimdb Temporal Atlas Tracks Blind Spot Filling
+
+**Location**: `/var/mnt/eclipse/repos/metadata-grammar/docs/BACKENDS.adoc` (Backend spec) and verisimdb integration
+
+**How verified**: verisimdb is the "cartographic atlas" coordinator. README (§verisimdb) claims it provides "Time-travel queries: 'What coverage did we have on 2020-01-01?'" and "Cartographic deltas: Track blind spot filling, uncertainty reduction." This is implemented by: (1) a D_p's version history (Git-like semantics) stored in verisimdb, (2) VQL extensions (`AT TIME`, `DELTA` operators) that query past states, and (3) blind spot tracking: each D_p stores `knownBlindSpots` (Zone 2) as structured data. The atlas queries can answer "How much of Zone 2 did we fill between 2020 and 2025?"
+
+**Caveat**: verisimdb backend is fully implemented; other backends (RDF, SQL, NoSQL) do not support temporal queries. Time-travel is a verisimdb-only feature.
 
 == Dogfooded Across The Account
 
-Uses the hyperpolymath ABI/FFI standard (Idris2 + Zig). Same pattern used across
-https://github.com/hyperpolymath/proven[proven],
-https://github.com/hyperpolymath/burble[burble], and
-https://github.com/hyperpolymath/gossamer[gossamer].
+JGD formal semantics are specified in Idris2 (same as ochrance, proven). The Zig FFI layer provides the stable C ABI for SQL/JSON/RDF serializers. This pattern is reused across verisimdb (database) and ecosystem repos (dependency tracking).
+
+The cartography paradigm is foundational to BoJ (Bag of Jewels) and echidna (proof exploration).
 
 == File Map
 
@@ -33,10 +42,35 @@ https://github.com/hyperpolymath/gossamer[gossamer].
 |===
 | Path | What's There
 
-| `src/` | Source code
-| `ffi/` | Foreign function interface
-| `test(s)/` | Test suite
+| `spec/CONCEPT.adoc` | JGD core concepts and D_p/D_n definitions
+| `spec/ARCHITECTURE.adoc` | 4-layer architecture: Idris2 ABI → Zig FFI → bindings → apps
+| `spec/homoiconic.md` | Formal spec for homoiconic containers (recursive definition)
+| `spec/BACKENDS.adoc` | Storage independence; verisimdb vs RDF/SQL/NoSQL
+| `spec/JGD-SQL.adoc` | SQL accessibility layer (JGD-SQL → SPARQL compiler)
+| `src/abi/` | Idris2 ABI definitions: D_p, D_n, BlindSpot types with dependent type proofs
+| `src/abi/Types.idr` | Type definitions with homoiconicity proofs
+| `src/abi/Metadata.idr` | Metadata schema: title, creator, coverage, uncertainty, version
+| `src/abi/CartographicDelta.idr` | Temporal tracking: blind spot filling metrics
+| `ffi/zig/` | Zig FFI layer: stable C ABI for serializers
+| `ffi/zig/rdf-serializer.zig` | RDF/Turtle serialization
+| `ffi/zig/jsonld-serializer.zig` | JSON-LD serialization
+| `ffi/zig/sql-compiler.zig` | JGD-SQL → SPARQL compiler
+| `bindings/rust/` | Rust CLI tools and utilities
+| `bindings/julia/` | Julia batch scripts for D_p analysis
+| `bindings/rescript/` | ReScript web UI for D_p creation and visualization
+| `tests/homoiconicity_test.rs` | Roundtrip tests: serialize D_p → JSON-LD → parse → D_p (identity)
+| `tests/temporal_test.rs` | verisimdb time-travel queries (version history)
+| `tests/blind_spot_test.rs` | Zone 2 tracking and filling metrics
 |===
+
+== Testing Critical Paths
+
+* **Homoiconicity**: `tests/homoiconicity_test.rs` — parse D_p, serialize to JSON-LD, parse again, verify structural identity
+* **Temporal queries**: `tests/temporal_test.rs` — load verisimdb, query past state at specific timestamp, verify coverage deltas
+* **Blind spot tracking**: `tests/blind_spot_test.rs` — mark Zone 2, query Zone 2 evolution over time, verify filling metrics
+* **RDF/SQL conversion**: `tests/format_conversion.rs` — D_p → RDF/Turtle → D_p, D_p → SQL → D_p (roundtrip)
+* **VQL extensions**: `tests/vql_temporal.rs` — test `AT TIME` and `DELTA` operators against verisimdb
+* **Idris2 proofs**: `src/abi/` tests — type-check homoiconicity proofs compile without errors
 
 == Questions?
 
