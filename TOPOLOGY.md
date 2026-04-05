@@ -9,7 +9,7 @@
 ```
                         ┌─────────────────────────────────────────┐
                         │              CARTOGRAPHER               │
-                        │        (CLI, Web UI, verisimdb)         │
+                        │        (CLI, Web UI, verisim)         │
                         └───────────────────┬─────────────────────┘
                                             │
                                             ▼
@@ -39,7 +39,7 @@
                                             ▼
                         ┌─────────────────────────────────────────┐
                         │             DATA SUBSTRATES             │
-                        │ (verisimdb, RDF, SQL, Property Graphs)  │
+                        │ (verisim, RDF, SQL, Property Graphs)  │
                         └─────────────────────────────────────────┘
 
                         ┌─────────────────────────────────────────┐
@@ -63,7 +63,7 @@ FORMAL SPEC (PHASE 1)
 FFI & TOOLING (PHASE 5)
   Zig FFI Implementation            ████░░░░░░  40%    SQL parser active
   Rust CLI (jgd)                    ████░░░░░░  40%    Initial validation tasks
-  verisimdb Integration             ██████░░░░  60%    Temporal atlas logic
+  verisim Integration             ██████░░░░  60%    Temporal atlas logic
 
 REPO INFRASTRUCTURE
   Justfile Automation               ██████████ 100%    Standard build/lint tasks
@@ -80,7 +80,7 @@ OVERALL:                            ██████░░░░  ~60%   Spec 
 Idris2 Spec ──────► Zig FFI Bridge ──────► Rust/Julia ──────► Application
      │                 │                      │                 │
      ▼                 ▼                      ▼                 ▼
-Correctness ──────► JGD-SQL Parser ──────► Registry Sync ──► verisimdb
+Correctness ──────► JGD-SQL Parser ──────► Registry Sync ──► verisim
 ```
 
 ## Update Protocol

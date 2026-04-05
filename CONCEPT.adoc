@@ -72,7 +72,7 @@ For two decades, we've obsessed over the "black box problem"—how to interpret 
 
 === The Cartographic Paradigm
 
-**verisimdb**: The cartographic index (atlas)
+**verisim**: The cartographic index (atlas)
 - Indexes phenomenal databases (map of maps)
 - Tracks spatiotemporal coverage boundaries
 - Maps relationships and lineage
@@ -82,7 +82,7 @@ For two decades, we've obsessed over the "black box problem"—how to interpret 
 **Phenomenal databases**: Autonomous observations (the maps)
 - Individual datasets distributed across institutions
 - Each a partial, perspective-bound view of reality
-- Registered with verisimdb, indexed by coverage
+- Registered with verisim, indexed by coverage
 - The federation we navigate and compose
 
 **metadata-grammar**: The cartographic standard
@@ -125,11 +125,11 @@ mg:license, mg:rights, mg:provenance, mg:governance
 - Bioschemas (life sciences)
 - Crosswalks to legacy vocabularies (VoID, Dublin Core, DCAT)
 
-== Integration with verisimdb: The Cartographic Index
+== Integration with verisim: The Cartographic Index
 
-**verisimdb** serves as the **atlas** that coordinates exploration of reality.
+**verisim** serves as the **atlas** that coordinates exploration of reality.
 
-=== verisimdb as Cartographic Infrastructure
+=== verisim as Cartographic Infrastructure
 
 **Core capabilities**:
 - **Temporal versioning**: Track how our maps evolve as we understand reality better
@@ -144,19 +144,19 @@ mg:license, mg:rights, mg:provenance, mg:governance
 - **Guide exploration**: Prioritize which darkness to explore next
 - **Track cartographic evolution**: "Our 2025 map corrected errors from 2020"
 
-=== Metadata Grammar + verisimdb Integration
+=== Metadata Grammar + verisim Integration
 
 **How they work together**:
 
 1. **metadata-grammar** defines the cartographic standard (how to create maps)
-2. **verisimdb** implements the atlas infrastructure (indexes the maps)
-3. **Phenomenal databases** register with verisimdb using metadata-grammar specs
+2. **verisim** implements the atlas infrastructure (indexes the maps)
+3. **Phenomenal databases** register with verisim using metadata-grammar specs
 4. **The federation** grows as we explore and map new domains
 
 [source,turtle]
 ----
 @prefix mg: <https://hyperpolymath.org/ns/metadata-grammar#> .
-@prefix vsim: <https://hyperpolymath.org/ns/verisimdb#> .
+@prefix vsim: <https://hyperpolymath.org/ns/verisim#> .
 
 # The cartographic index (atlas)
 :GlobalAtlas a vsim:VerisimDatabase, mg:CartographicIndex ;
@@ -194,7 +194,7 @@ mg:license, mg:rights, mg:provenance, mg:governance
     mg:validates-against :MetadataGrammarShapes ;
     mg:validation-status mg:Valid .
 
-# Cartographic evolution tracked by verisimdb
+# Cartographic evolution tracked by verisim
 :ClimateDB-History a vsim:VersionHistory ;
     vsim:snapshots [
         :ClimateDB_v2020,  # Our understanding in 2020
@@ -317,7 +317,7 @@ Runtime validation via SHACL shapes:
 - [ ] Rust CLI for metadata operations
 
 === Phase 3: Integration
-- [ ] verisimdb storage backend
+- [ ] verisim storage backend
 - [ ] SPARQL endpoint with temporal queries
 - [ ] GitHub Actions workflow for metadata validation
 - [ ] Documentation site (AsciiDoc + Jekyll)
@@ -329,7 +329,7 @@ Runtime validation via SHACL shapes:
 - **DCAT**: http://www.w3.org/ns/dcat
 - **PROV-O**: http://www.w3.org/ns/prov
 - **Schema.org**: https://schema.org
-- **verisimdb**: https://github.com/hyperpolymath/verisimdb
+- **verisim**: https://github.com/hyperpolymath/verisimdb
 
 == License
 

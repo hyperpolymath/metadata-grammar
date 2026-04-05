@@ -8,7 +8,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 **Journey Grammar for Databases (JGD) is storage-independent.** It defines a grammar and conceptual framework that works with any backend capable of storing structured metadata.
 
-However, **verisimdb is the canonical/reference implementation** that fully realizes JGD's temporal cartography capabilities.
+However, **verisim is the canonical/reference implementation** that fully realizes JGD's temporal cartography capabilities.
 
 == Design Principles
 
@@ -20,7 +20,7 @@ However, **verisimdb is the canonical/reference implementation** that fully real
 - Property graphs (Neo4j, ArangoDB, JanusGraph)
 - SQL databases (PostgreSQL, MySQL, SQLite)
 - Document stores (MongoDB, CouchDB)
-- Hybrid/federated systems (verisimdb, polyglot persistence)
+- Hybrid/federated systems (verisim, polyglot persistence)
 
 **Why**: Enables adoption on existing infrastructure without forced migration.
 
@@ -42,20 +42,20 @@ Any backend supporting JGD must provide:
 
 Backends can extend JGD with:
 
-- **Custom query languages** (VQL for verisimdb, Cypher for Neo4j)
+- **Custom query languages** (VCL for verisim, Cypher for Neo4j)
 - **Specialized indexes** (R-tree for spatial, B-tree for temporal)
 - **Unique capabilities** (time-travel queries, graph algorithms)
 - **Performance optimizations** (column stores, caching)
 
 **Extension mechanism**: Backend-specific namespaces (e.g., `vsim:`, `neo4j:`, `pg:`)
 
-== Reference Implementation: verisimdb
+== Reference Implementation: verisim
 
-**verisimdb is the canonical backend** that demonstrates JGD's full potential.
+**verisim is the canonical backend** that demonstrates JGD's full potential.
 
-=== Why verisimdb?
+=== Why verisim?
 
-**Co-designed relationship**: JGD's concepts (D_p evolution, cartographic deltas, temporal queries) were developed alongside verisimdb's architecture.
+**Co-designed relationship**: JGD's concepts (D_p evolution, cartographic deltas, temporal queries) were developed alongside verisim's architecture.
 
 **Unique capabilities**:
 
@@ -63,11 +63,11 @@ Backends can extend JGD with:
 2. **Git-like semantics** - Immutable history, branching, merging
 3. **Time-travel queries** - "What did we know on 2020-01-01?"
 4. **Cartographic deltas** - Track how coverage/uncertainty improves
-5. **Homoiconic storage** - verisimdb IS a D_p describing database evolution
+5. **Homoiconic storage** - verisim IS a D_p describing database evolution
 
 **Natural fit**:
 ```turtle
-# verisimdb as both container AND D_p
+# verisim as both container AND D_p
 :VerisimDB a jgd:StorageContainer, jgd:D_p ;
     # As container: stores other D_p instances
     jgd:stores :ClimateDB, :EconomicDB, :GenomicDB ;
@@ -80,9 +80,9 @@ Backends can extend JGD with:
     jgd:describedBy jgd:JourneyGrammar .
 ```
 
-=== VQL Extensions
+=== VCL Extensions
 
-**VQL (Verisim Query Language)** extends SPARQL with temporal operators:
+**VCL (Verisim Query Language)** extends SPARQL with temporal operators:
 
 **Standard SPARQL** (works on all backends):
 ```sparql
@@ -96,10 +96,10 @@ SELECT ?db WHERE {
 }
 ```
 
-**VQL temporal extension** (verisimdb-only):
+**VCL temporal extension** (verisim-only):
 ```sparql
 PREFIX jgd: <https://hyperpolymath.org/ns/jgd#>
-PREFIX vsim: <https://hyperpolymath.org/ns/verisimdb#>
+PREFIX vsim: <https://hyperpolymath.org/ns/verisim#>
 
 # What databases covered Europe on 2020-01-01?
 SELECT ?db AT TIME "2020-01-01T00:00:00Z" WHERE {
@@ -115,9 +115,9 @@ SELECT ?db ?coverage_2020 ?coverage_2025 WHERE {
 }
 ```
 
-**Cartographic delta queries** (verisimdb-only):
+**Cartographic delta queries** (verisim-only):
 ```sparql
-PREFIX vsim: <https://hyperpolymath.org/ns/verisimdb#>
+PREFIX vsim: <https://hyperpolymath.org/ns/verisim#>
 
 # What blind spots were filled between versions?
 SELECT ?db ?blindspot WHERE {
@@ -137,7 +137,7 @@ SELECT ?db ?version ?uncertainty WHERE {
 }
 ```
 
-=== verisimdb-Specific Metadata
+=== verisim-Specific Metadata
 
 **Extensions beyond core JGD**:
 
@@ -148,7 +148,7 @@ SELECT ?db ?version ?uncertainty WHERE {
     jgd:temporalCoverage "1980-2025" ;
     jgd:knownBlindSpots [ jgd:spatial :SouthernOceans ] ;
 
-    # verisimdb extensions
+    # verisim extensions
     vsim:versionHistory :ClimateDB-History ;
     vsim:currentSnapshot :ClimateDB_v2025 ;
     vsim:cartographicDelta [
@@ -331,9 +331,9 @@ RETURN db, other
 |===
 |Backend |Core JGD |Temporal |Spatial |Graph |Recommended For
 
-|**verisimdb**
+|**verisim**
 |✓ Full
-|✓ Native (VQL)
+|✓ Native (VCL)
 |✓ Indexes
 |✓ RDF
 |**Reference implementation, temporal cartography**
@@ -374,7 +374,7 @@ RETURN db, other
 
 == Migration Paths
 
-=== Start Simple, Grow Into verisimdb
+=== Start Simple, Grow Into verisim
 
 **Phase 1: Prototype (PostgreSQL/MongoDB)**
 ```
@@ -392,10 +392,10 @@ Migrate to RDF for better federation support
 → Limitations: Still no native temporal queries
 ```
 
-**Phase 3: Full Capabilities (verisimdb)**
+**Phase 3: Full Capabilities (verisim)**
 ```
-Migrate to verisimdb for complete JGD features
-→ Temporal queries via VQL
+Migrate to verisim for complete JGD features
+→ Temporal queries via VCL
 → Cartographic deltas automatic
 → Optimal exploration guidance
 ```
@@ -406,7 +406,7 @@ Migrate to verisimdb for complete JGD features
 
 ```
 ┌─────────────────────────────────────────┐
-│ verisimdb (cartographic index/atlas)   │
+│ verisim (cartographic index/atlas)   │
 │ - Indexes all D_p instances             │
 │ - Temporal queries, deltas              │
 └──────────────┬──────────────────────────┘
@@ -420,7 +420,7 @@ Migrate to verisimdb for complete JGD features
 └──────────┘      └──────────────┘
 ```
 
-**verisimdb federates queries across heterogeneous backends.**
+**verisim federates queries across heterogeneous backends.**
 
 == Implementing a New Backend
 
@@ -480,8 +480,8 @@ ZRANGEBYSCORE d_p:temporal:end 1577836800 +inf
 
 1. **Existing infrastructure** - Use what you already have
 2. **Query complexity** - Graph queries → Neo4j, SPARQL → RDF, SQL → PostgreSQL
-3. **Temporal needs** - Time-travel required → verisimdb, snapshots OK → anything
-4. **Scale** - Millions of D_p → distributed (ArangoDB, verisimdb federation)
+3. **Temporal needs** - Time-travel required → verisim, snapshots OK → anything
+4. **Scale** - Millions of D_p → distributed (ArangoDB, verisim federation)
 5. **Team expertise** - Use what your team knows
 
 **Start simple, migrate as needed.**
@@ -490,7 +490,7 @@ ZRANGEBYSCORE d_p:temporal:end 1577836800 +inf
 
 **Use multiple backends for different purposes**:
 
-- **verisimdb**: Cartographic index (atlas)
+- **verisim**: Cartographic index (atlas)
 - **PostgreSQL**: Large-scale data storage
 - **Redis**: Fast query cache
 - **Elasticsearch**: Full-text search of D_p metadata
@@ -508,14 +508,14 @@ ZRANGEBYSCORE d_p:temporal:end 1577836800 +inf
 
 ## Conclusion
 
-**JGD is storage-independent by design**, enabling adoption on any structured storage backend. **verisimdb is the canonical implementation** that fully realizes JGD's temporal cartography vision.
+**JGD is storage-independent by design**, enabling adoption on any structured storage backend. **verisim is the canonical implementation** that fully realizes JGD's temporal cartography vision.
 
 **Recommendation**:
 - **Start** with existing infrastructure (SQL, RDF, Graph)
 - **Adopt** core JGD metadata immediately
-- **Migrate** to verisimdb when temporal queries become essential
+- **Migrate** to verisim when temporal queries become essential
 
-The grammar works everywhere. The journey works best with verisimdb.
+The grammar works everywhere. The journey works best with verisim.
 
 == License
 

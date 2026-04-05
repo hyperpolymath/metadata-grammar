@@ -13,7 +13,7 @@ Journey Grammar for Databases draws on established concepts from cartography, ph
 
 **Critical cartography** (Harley, 1989 <<harley1989>>; Wood, 1992 <<wood1992>>) established that maps are not neutral representations but constructed artifacts shaped by perspective, power, and available instruments. Our concept of **emerging maps on journeys** builds on this: D_p instances don't pre-exist observation—they emerge from the process of measurement, carrying the biases and limitations of their creation context.
 
-**Historical cartography** documents how maps evolved during the Age of Exploration (1400s-1900s), progressively filling *terra incognita* while acknowledging "here be dragons" for unmapped regions <<short2003>>. We adopt this framing explicitly: verisimdb as a modern atlas coordinating D_p instances (maps), with explicit marking of known coverage gaps (Zone 2) and unknown darkness (Zone 3).
+**Historical cartography** documents how maps evolved during the Age of Exploration (1400s-1900s), progressively filling *terra incognita* while acknowledging "here be dragons" for unmapped regions <<short2003>>. We adopt this framing explicitly: verisim as a modern atlas coordinating D_p instances (maps), with explicit marking of known coverage gaps (Zone 2) and unknown darkness (Zone 3).
 
 **GIS and spatial data quality** research extensively covers spatial coverage, resolution, positional accuracy, and uncertainty <<goodchild2009>>. However, GIS focuses on *geographic* data quality. **We generalize these concepts** to arbitrary phenomenal databases (not just spatial), adding temporal evolution tracking and epistemic humility metrics.
 
@@ -47,13 +47,13 @@ Journey Grammar for Databases draws on established concepts from cartography, ph
 
 **Schema.org Dataset** (Guha et al., 2016) <<schemaorg2016>> provides web-friendly dataset markup. **Limitation**: Focused on SEO and discovery, not scientific cartography or epistemic humility.
 
-**Contribution**: JGD is a *grammar*, not just a vocabulary. It adds compositional rules (EBNF syntax), formal semantics (Idris2 dependent types), transformation rules (category theory), and temporal cartography (verisimdb integration). We don't replace VoID/DCAT—we provide the grammatical infrastructure they lack.
+**Contribution**: JGD is a *grammar*, not just a vocabulary. It adds compositional rules (EBNF syntax), formal semantics (Idris2 dependent types), transformation rules (category theory), and temporal cartography (verisim integration). We don't replace VoID/DCAT—we provide the grammatical infrastructure they lack.
 
 === Temporal Databases & Versioning
 
 **Temporal databases** (Snodgrass, 1999 <<snodgrass1999>>) support valid-time and transaction-time semantics. SQL:2011 added `SYSTEM_VERSIONING` for temporal tables. **Gap**: Temporal databases version *data*, not *metadata about coverage*. They can't answer "What spatial coverage did this database claim on 2020-01-01?" or "How has our knowledge of blind spots evolved?"
 
-**Git and version control** track file history with immutable commits, branching, merging. **Git-like semantics for metadata** (our verisimdb design) is inspired by this but applied to *cartographic evolution*: tracking how D_p instances' coverage, uncertainty, and blind spots change over time.
+**Git and version control** track file history with immutable commits, branching, merging. **Git-like semantics for metadata** (our verisim design) is inspired by this but applied to *cartographic evolution*: tracking how D_p instances' coverage, uncertainty, and blind spots change over time.
 
 **Contribution**: We extend temporal versioning from data to *metadata*, enabling time-travel queries over cartographic properties: "What did we know about global climate coverage in 2000 vs 2025?"
 
@@ -63,7 +63,7 @@ Journey Grammar for Databases draws on established concepts from cartography, ph
 
 **Federated databases** (Sheth & Larson, 1990 <<sheth1990>>) integrate heterogeneous data sources. **Limitation**: Focus on query optimization and schema integration, not on *mapping unexplored territory* or *guiding data collection* to fill coverage gaps.
 
-**Contribution**: verisimdb as cartographic index provides *atlas-based federation*: decentralized D_p instances register their coverage, atlas coordinates discovery, identifies gaps, and guides exploration priorities.
+**Contribution**: verisim as cartographic index provides *atlas-based federation*: decentralized D_p instances register their coverage, atlas coordinates discovery, identifies gaps, and guides exploration priorities.
 
 === AI Interpretability & Ethics
 
@@ -90,7 +90,7 @@ Journey Grammar for Databases **does contribute**:
 2. **Formal grammar** (syntax + semantics + composition rules) beyond existing vocabularies
 3. **Homoiconic containers** (databases describing themselves using same grammar as contents)
 4. **Metamorphic transformations** (provable representation changes preserving invariants)
-5. **Temporal cartography** (verisimdb tracks D_p evolution, enables time-travel queries)
+5. **Temporal cartography** (verisim tracks D_p evolution, enables time-travel queries)
 6. **Epistemic humility infrastructure** (machine-readable coverage gaps, three-zone model)
 7. **Atlas-based federation** (coordinated exploration, blind spot identification)
 8. **Paradigm inversion** for AI ethics (explore unmeasured reality, not just interpret models)

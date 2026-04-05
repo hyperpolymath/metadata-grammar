@@ -65,7 +65,7 @@ Data science follows the same pattern:
 - **1990s**: Many domains unmeasured/unobserved
 - **2000s-2020s**: Sensors, satellites, digital instrumentation create massive observations
 - **Each observation**: Phenomenal database (D_p) emerges
-- **verisimdb**: Modern atlas coordinating D_p federation
+- **verisim**: Modern atlas coordinating D_p federation
 - **2030s+**: Progressively complete cartography of measurable reality
 
 **But we lack the grammatical infrastructure to describe this process formally.**
@@ -114,7 +114,7 @@ This paper proposes **Journey Grammar for Databases (JGD)**, a formal framework 
 1. **Paradigm shift**: From black box obsession to white box in darkness
 2. **Formal grammar**: Syntax (EBNF), semantics (Idris2 dependent types), transformations (category theory)
 3. **Cartographic primitives**: D_p/D_n classification, spatiotemporal coverage, blind spot tracking
-4. **Temporal cartography**: Maps emerge from journeys, tracked via verisimdb
+4. **Temporal cartography**: Maps emerge from journeys, tracked via verisim
 5. **Epistemic humility**: Machine-readable three-zone model, explicit unknown unknowns
 6. **Atlas-based federation**: Coordinated exploration, gap identification, discovery
 
@@ -325,7 +325,7 @@ Beyond blind spots lie **unknown unknowns**: domains we haven't conceived.
 **Example**:
 
 ```turtle
-# verisimdb is both a storage container AND a D_p instance
+# verisim is both a storage container AND a D_p instance
 :VerisimDB a jgd:StorageContainer, jgd:D_p ;
     # As container: stores other D_p instances
     jgd:stores :ClimateDB, :EconomicDB, :GenomicDB ;
@@ -338,7 +338,7 @@ Beyond blind spots lie **unknown unknowns**: domains we haven't conceived.
     jgd:describedBy jgd:JourneyGrammar .
 ```
 
-**verisimdb is a map that maps other maps.** It describes its own structure using the grammar it enforces for contents.
+**verisim is a map that maps other maps.** It describes its own structure using the grammar it enforces for contents.
 
 **Benefits**:
 - Unified formalism for container and contents
@@ -406,7 +406,7 @@ Time T₃ (2010): 1km resolution grid → ClimateDB_v3 (improved resolution)
 Time T₄ (2025): Real-time global coverage → ClimateDB_v4 (current state)
 ```
 
-**verisimdb tracks this evolution**:
+**verisim tracks this evolution**:
 
 ```turtle
 :ClimateDB jgd:versionHistory :ClimateDB-History .
@@ -428,7 +428,7 @@ Time T₄ (2025): Real-time global coverage → ClimateDB_v4 (current state)
 ] .
 ```
 
-**Temporal queries** (VQL extension):
+**Temporal queries** (VCL extension):
 
 ```sparql
 # What coverage did we have in 2000?
@@ -453,7 +453,7 @@ SELECT ?db ?blindspot ?when_filled WHERE {
 
 **Problem**: Scattered D_p instances, uncoordinated collection, duplicated efforts, unknown gaps.
 
-**Solution**: **verisimdb as cartographic atlas**
+**Solution**: **verisim as cartographic atlas**
 
 **Atlas functions**:
 1. **Index D_p instances**: Catalog what maps exist
@@ -466,7 +466,7 @@ SELECT ?db ?blindspot ?when_filled WHERE {
 
 ```
 ┌─────────────────────────────────────────┐
-│ verisimdb (Cartographic Atlas)          │
+│ verisim (Cartographic Atlas)          │
 │ - Indexes all D_p instances             │
 │ - Temporal queries, cartographic deltas │
 │ - Gap identification, exploration guide │
@@ -620,7 +620,7 @@ impl D_p {
 - `jgd create` - Create new D_p metadata
 - `jgd validate` - Validate against SHACL shapes
 - `jgd transform` - Metamorphic transformations
-- `jgd query` - Query verisimdb atlas
+- `jgd query` - Query verisim atlas
 
 **Web UI** (ReScript):
 - Visual metadata creation
@@ -640,7 +640,7 @@ impl D_p {
 - Property graphs (Neo4j, ArangoDB)
 - SQL databases (PostgreSQL, MySQL)
 - Document stores (MongoDB, CouchDB)
-- **verisimdb** (canonical implementation with full temporal features)
+- **verisim** (canonical implementation with full temporal features)
 
 **Minimal backend requirements**:
 1. Structured storage for D_p metadata
@@ -648,11 +648,11 @@ impl D_p {
 3. Federation support (can reference other D_p instances)
 4. Homoiconic capability (container can describe itself)
 
-**verisimdb adds**:
+**verisim adds**:
 - Temporal versioning (Git-like semantics)
 - Time-travel queries ("what coverage existed on date X?")
 - Cartographic deltas (track blind spot filling over time)
-- VQL extensions (SPARQL + temporal operators)
+- VCL extensions (SPARQL + temporal operators)
 
 == Implications & Future Work
 
@@ -754,7 +754,7 @@ Required: ~0.4% annual growth
 **Phase 2: Homoiconic Container Model (Q2 2026)**
 - `jgd:StorageContainer` abstract type
 - Self-description and reflection APIs
-- verisimdb as reference implementation
+- verisim as reference implementation
 
 **Phase 3: Metamorphic Library (Q3 2026)**
 - Transformation catalog (RDF ↔ JSON-LD ↔ Graph ↔ SQL)
@@ -762,8 +762,8 @@ Required: ~0.4% annual growth
 - Round-trip validation tests
 
 **Phase 4: Integration Ecosystem (Q4 2026)**
-- verisimdb atlas deployment
-- SPARQL/VQL endpoint with temporal queries
+- verisim atlas deployment
+- SPARQL/VCL endpoint with temporal queries
 - D_p discovery and gap analysis tools
 
 **Phase 5: Tooling & Libraries (Q1 2027)**
@@ -780,7 +780,7 @@ Required: ~0.4% annual growth
 
 **Success metrics by 2027**:
 - >1000 D_p instances created
-- >100,000 databases indexed in verisimdb atlas
+- >100,000 databases indexed in verisim atlas
 - White box grows 15% → 17% (measurable expansion)
 - >10,000 Zone 2 blind spots cataloged
 - >10 institutions using JGD
@@ -793,7 +793,7 @@ Required: ~0.4% annual growth
 - **Dependent types**: Idris2 implementation of D_p/D_n types
 - **Semantic web**: RDF, SPARQL, OWL ontologies
 - **Data science**: Blind spot identification, coverage metrics
-- **verisimdb**: Temporal database integration
+- **verisim**: Temporal database integration
 - **Technical writing**: Documentation, tutorials, examples
 
 **Contact**: j.d.a.jewell@open.ac.uk
@@ -855,7 +855,7 @@ _[See ARXIV-RELATED-WORK.adoc for full section—abbreviated here for space]_
 
 == Acknowledgments
 
-This work builds on foundational insights from Alfred Korzybski (map/territory), Immanuel Kant (phenomenal/noumenal), and the rich traditions of critical cartography, epistemology, and semantic web research. We thank the verisimdb project for inspiring the temporal cartography vision.
+This work builds on foundational insights from Alfred Korzybski (map/territory), Immanuel Kant (phenomenal/noumenal), and the rich traditions of critical cartography, epistemology, and semantic web research. We thank the verisim project for inspiring the temporal cartography vision.
 
 == References
 

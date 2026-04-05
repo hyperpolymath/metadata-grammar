@@ -35,7 +35,7 @@ CREATE D_P climate_db (
 
 1. **Familiar syntax** - Looks like SQL, works like SQL
 2. **Bidirectional** - JGD-SQL ↔ Turtle (lossless conversion)
-3. **Extensible** - Backend-specific extensions (verisimdb VQL, PostGIS, etc.)
+3. **Extensible** - Backend-specific extensions (verisim VCL, PostGIS, etc.)
 4. **Standard-compliant** - Uses SQL:2011 temporal features where possible
 5. **Optional** - JGD-SQL is a convenience layer, not required
 
@@ -132,14 +132,14 @@ CREATE JGD_CONTAINER <container_name> (
 
 **Example**:
 ```sql
--- Create a verisimdb container (homoiconic)
+-- Create a verisim container (homoiconic)
 CREATE JGD_CONTAINER my_atlas (
-    backend = 'verisimdb',
+    backend = 'verisim',
     stores = ['climate_db', 'economic_db', 'genomic_db'],
     indexes = ['spatial', 'temporal', 'provenance'],
     metadata = '{
         "versioningStrategy": "git-like",
-        "queryLanguages": ["SPARQL", "VQL", "JGD-SQL"]
+        "queryLanguages": ["SPARQL", "VCL", "JGD-SQL"]
     }'::jsonb
 );
 
@@ -345,9 +345,9 @@ FROM jgd.d_p
 GROUP BY observes;
 ```
 
-=== Time-Travel Queries (verisimdb extension)
+=== Time-Travel Queries (verisim extension)
 
-**VQL-SQL extension for temporal queries**:
+**VCL-SQL extension for temporal queries**:
 ```sql
 -- What databases existed on 2020-01-01?
 SELECT db_name, spatial_coverage
@@ -449,7 +449,7 @@ WHERE ST_Overlaps(d1.spatial_coverage, d2.spatial_coverage)
 
 |Container type
 |TEXT or ENUM
-|`'verisimdb'`, `'postgresql'`, `'neo4j'`
+|`'verisim'`, `'postgresql'`, `'neo4j'`
 
 |Blind spots
 |TABLE with GEOMETRY
@@ -474,7 +474,7 @@ CREATE TYPE uncertainty_level AS ENUM (
 
 -- Container types
 CREATE TYPE container_type AS ENUM (
-    'verisimdb', 'postgresql', 'mysql', 'neo4j',
+    'verisim', 'postgresql', 'mysql', 'neo4j',
     'mongodb', 'rdf-triplestore'
 );
 
@@ -774,7 +774,7 @@ WHERE region = 'online-sales';
 - [ ] Federation queries (relationships, gaps)
 - [ ] Auto-detection functions
 
-=== Phase 3: verisimdb Integration (Q4 2026)
+=== Phase 3: verisim Integration (Q4 2026)
 - [ ] Time-travel queries (FOR SYSTEM_TIME)
 - [ ] Cartographic deltas
 - [ ] Metamorphic transformations via SQL

@@ -58,10 +58,10 @@ For two decades, we've worried about "black box" AI and opaque systems. **We've 
 ✓ **Three-zone model** - White box (15%), known darkness (25%), unknown darkness (60%)
 ✓ **Homoiconic containers** - Databases describe themselves using same grammar as contents
 ✓ **Metamorphic transformations** - Provable representation changes (RDF ↔ JSON-LD ↔ Graph ↔ SQL)
-✓ **Temporal cartography** - Maps emerge from journeys, tracked via verisimdb
+✓ **Temporal cartography** - Maps emerge from journeys, tracked via verisim
 ✓ **Formal semantics** - Idris2 dependent types prove metadata correctness
 ✓ **Epistemic humility** - Machine-readable blind spots and unknown unknowns
-✓ **Atlas-based federation** - verisimdb coordinates distributed D_p instances
+✓ **Atlas-based federation** - verisim coordinates distributed D_p instances
 ✓ **Multi-format** - RDF/Turtle, JSON-LD, SQL accessibility layer (JGD-SQL)
 ✓ **Legacy compatibility** - Crosswalks to VoID/Dublin Core/DCAT
 
@@ -154,22 +154,22 @@ Layer 3: Language Bindings
 Layer 4: Applications
     - CLI tools (create, validate, query, transform)
     - Web UI (visual metadata creation)
-    - verisimdb integration (atlas coordination)
-    - SPARQL/VQL endpoint (temporal queries)
+    - verisim integration (atlas coordination)
+    - SPARQL/VCL endpoint (temporal queries)
 ----
 
-== verisimdb: The Cartographic Atlas
+== verisim: The Cartographic Atlas
 
 See link:BACKENDS.adoc[BACKENDS.adoc] for storage independence details.
 
-**verisimdb is the canonical backend** providing full temporal cartography:
+**verisim is the canonical backend** providing full temporal cartography:
 
 **Unique capabilities**:
 - **Temporal versioning**: Git-like semantics for D_p evolution
 - **Time-travel queries**: "What coverage did we have on 2020-01-01?"
 - **Cartographic deltas**: Track blind spot filling, uncertainty reduction
-- **VQL extensions**: SPARQL + temporal operators (`AT TIME`, `DELTA`)
-- **Homoiconic**: verisimdb is itself a D_p describing database evolution
+- **VCL extensions**: SPARQL + temporal operators (`AT TIME`, `DELTA`)
+- **Homoiconic**: verisim is itself a D_p describing database evolution
 
 **Other backends supported** (see BACKENDS.adoc):
 - RDF triplestores (Jena, Virtuoso, Blazegraph)
@@ -177,7 +177,7 @@ See link:BACKENDS.adoc[BACKENDS.adoc] for storage independence details.
 - Property graphs (Neo4j, ArangoDB)
 - Document stores (MongoDB, CouchDB)
 
-**JGD core is storage-independent.** verisimdb provides optimal temporal features.
+**JGD core is storage-independent.** verisim provides optimal temporal features.
 
 == Documentation
 
@@ -188,7 +188,7 @@ See link:BACKENDS.adoc[BACKENDS.adoc] for storage independence details.
 **Technical Specifications**:
 - link:CONCEPT.adoc[CONCEPT.adoc] - Core concepts and overview
 - link:ARCHITECTURE.adoc[ARCHITECTURE.adoc] - 4-layer architecture (Idris2 → Zig → bindings → apps)
-- link:BACKENDS.adoc[BACKENDS.adoc] - Storage independence, verisimdb vs alternatives
+- link:BACKENDS.adoc[BACKENDS.adoc] - Storage independence, verisim vs alternatives
 - link:JGD-SQL.adoc[JGD-SQL.adoc] - SQL accessibility layer specification
 
 **Practical Guides**:
@@ -219,7 +219,7 @@ See link:ROADMAP.adoc[ROADMAP.adoc] for complete plan.
 - Transformation catalog, Idris2 proofs, round-trip validation
 
 **Phase 4: Integration Ecosystem** (Q4 2026)
-- verisimdb atlas, SPARQL/VQL endpoint, D_p discovery tools
+- verisim atlas, SPARQL/VCL endpoint, D_p discovery tools
 
 **Phase 5: Tooling & Libraries** (Q1 2027)
 - Zig FFI, Rust CLI, ReScript web UI, Julia batch scripts, Python/JS bindings
@@ -229,7 +229,7 @@ See link:ROADMAP.adoc[ROADMAP.adoc] for complete plan.
 
 **Success metrics by 2027**:
 - >1000 D_p instances created
-- >100,000 databases indexed in verisimdb atlas
+- >100,000 databases indexed in verisim atlas
 - White box expansion: 15% → 17% coverage
 - >10,000 Zone 2 blind spots cataloged
 

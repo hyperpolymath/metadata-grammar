@@ -50,7 +50,7 @@ All documentation is complete, current, and cross-referenced. The repository is 
 |File |Purpose |Status
 
 |link:CONCEPT.adoc[CONCEPT.adoc]
-|Core concepts overview, D_p/D_n introduction, paradigm shift summary, verisimdb integration
+|Core concepts overview, D_p/D_n introduction, paradigm shift summary, verisim integration
 |✓ Complete
 
 |link:ARCHITECTURE.adoc[ARCHITECTURE.adoc]
@@ -58,7 +58,7 @@ All documentation is complete, current, and cross-referenced. The repository is 
 |✓ Complete
 
 |link:BACKENDS.adoc[BACKENDS.adoc]
-|Storage independence architecture, verisimdb as canonical implementation, VQL extensions, other backends (RDF, SQL, Graph, Document), migration paths
+|Storage independence architecture, verisim as canonical implementation, VCL extensions, other backends (RDF, SQL, Graph, Document), migration paths
 |✓ Complete
 
 |link:JGD-SQL.adoc[JGD-SQL.adoc]
@@ -114,11 +114,11 @@ All documentation is complete, current, and cross-referenced. The repository is 
 |✓ Complete
 
 |link:ECOSYSTEM.scm[ECOSYSTEM.scm]
-|Position in hyperpolymath ecosystem: relationships to verisimdb, proven, VoID/DCAT/Dublin Core, gitbot-fleet, what-this-is, what-this-is-not
+|Position in hyperpolymath ecosystem: relationships to verisim, proven, VoID/DCAT/Dublin Core, gitbot-fleet, what-this-is, what-this-is-not
 |✓ Complete
 
 |link:META.scm[META.scm]
-|Architectural decisions (10 ADRs): Idris2 choice, grammar not vocabulary, verisimdb as atlas, D_p/D_n classification, homoiconic containers, metamorphic transforms, white box paradigm, three zones, multi-formalism, voyage metaphor
+|Architectural decisions (10 ADRs): Idris2 choice, grammar not vocabulary, verisim as atlas, D_p/D_n classification, homoiconic containers, metamorphic transforms, white box paradigm, three zones, multi-formalism, voyage metaphor
 |✓ Complete
 
 |===
@@ -264,7 +264,7 @@ All documentation follows these standards:
 ✓ **Author attribution**: Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 ✓ **Cross-references**: Documents link to each other appropriately
 ✓ **AsciiDoc format**: Consistent formatting, table of contents where appropriate
-✓ **Terminology consistency**: D_p, D_n, JGD, verisimdb, Zone 1/2/3 used consistently
+✓ **Terminology consistency**: D_p, D_n, JGD, verisim, Zone 1/2/3 used consistently
 ✓ **Examples included**: Turtle, SQL, code snippets throughout
 ✓ **Academic rigor**: Citations, references, related work acknowledged
 
@@ -285,7 +285,7 @@ All documentation follows these standards:
 
 **Medium-term** (6-12 months):
 1. Complete Phase 1-2 (formal spec, homoiconic containers)
-2. verisimdb integration prototype
+2. verisim integration prototype
 3. Prepare full technical paper for ISWC 2027
 4. Launch community forum
 

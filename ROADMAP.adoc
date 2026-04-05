@@ -61,7 +61,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 |Component |Description
 
 |jgd:StorageContainer
-|Abstract type for storage systems (verisimdb, SQL, RDF, Graph)
+|Abstract type for storage systems (verisim, SQL, RDF, Graph)
 
 |Self-Description API
 |Containers describe their own structure using JGD
@@ -72,8 +72,8 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 |Container Metadata
 |Schema, indexes, storage format described in same grammar as contents
 
-|verisimdb Implementation
-|verisimdb as homoiconic D_p container
+|verisim Implementation
+|verisim as homoiconic D_p container
 
 |Example Containers
 |Reference implementations: RDF triplestore, SQL DB, property graph
@@ -108,14 +108,14 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 === Phase 4: Integration Ecosystem (Q4 2026)
 
-**Goal**: Integrate with verisimdb, a2ml, k9-svc.
+**Goal**: Integrate with verisim, a2ml, k9-svc.
 
 [cols="1,3"]
 |===
 |Component |Description
 
-|verisimdb Atlas
-|Deploy verisimdb as cartographic index for D_p federation
+|verisim Atlas
+|Deploy verisim as cartographic index for D_p federation
 
 |a2ml Compilation
 |Compile JGD specs to SHACL, JSON Schema, ML models
@@ -196,7 +196,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 * [ ] Complete formal specification (EBNF, Idris2, Category Theory)
 * [ ] Homoiconic container model implemented
 * [ ] Metamorphic transformation library
-* [ ] verisimdb integration operational
+* [ ] verisim integration operational
 * [ ] First production D_p instances
 
 === 2027
@@ -221,7 +221,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 === Technical
 
 * **JGD adoption**: >1000 D_p instances created
-* **Atlas size**: >100,000 databases indexed in verisimdb
+* **Atlas size**: >100,000 databases indexed in verisim
 * **Coverage expansion**: White box grows from 15% → 25%
 * **Blind spots identified**: >10,000 Zone 2 gaps cataloged
 * **Transformations**: Round-trip tests pass 100%
@@ -245,7 +245,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 === Dependencies
 
-* **verisimdb maturity**: Requires stable temporal versioning
+* **verisim maturity**: Requires stable temporal versioning
 * **Idris2 ecosystem**: Needs mature dependent types tooling
 * **Category theory expertise**: Requires mathematical rigor
 * **Community buy-in**: Adoption depends on demonstrating value
@@ -264,7 +264,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 |Competing standards emerge
 |Clear value proposition, reference implementations
 
-|verisimdb bottleneck
+|verisim bottleneck
 |Atlas becomes single point of failure
 |Federation protocol allows multiple atlases
 

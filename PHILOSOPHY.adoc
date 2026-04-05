@@ -140,7 +140,7 @@ The noumenal database—reality itself—is what we cannot see. The **unexplored
 - Timestamped (our understanding at time T)
 - Progressively refined over time
 
-**The Atlas (verisimdb)**:
+**The Atlas (verisim)**:
 - Indexes all maps (phenomenal databases)
 - Tracks spatiotemporal coverage
 - Maps relationships and lineage
@@ -222,7 +222,7 @@ Unknown Territory (vast darkness)
     ↓
 Expedition/Observation (create phenomenal database)
     ↓
-Registration with verisimdb (add to atlas)
+Registration with verisim (add to atlas)
     ↓
 Index spatiotemporal coverage
     ↓
@@ -247,7 +247,7 @@ Iteratively better cartography of reality
 - 1990s: Many domains unmeasured/unobserved (terra incognita)
 - 2000s-2020s: Sensors, satellites, digital exhaust create massive observations
 - Each dataset = phenomenal database (map emerging from measurement journey)
-- verisimdb = modern atlas system tracking emerging maps
+- verisim = modern atlas system tracking emerging maps
 - 2030s+: Progressively complete cartography of measurable reality
 - **Key insight**: Data maps emerge FROM exploration, evolving as we journey deeper
 
@@ -315,7 +315,7 @@ Iteratively better cartography of reality
 
 == The Federation Architecture
 
-=== verisimdb: The Cartographic Index
+=== verisim: The Cartographic Index
 
 **Role**: Atlas coordinating the exploration
 
@@ -356,7 +356,7 @@ Iteratively better cartography of reality
 - Different quality levels
 
 **Indexed**:
-- Registered with verisimdb
+- Registered with verisim
 - Discoverable via the atlas
 - Composable with other databases
 - Tracked for coverage and lineage

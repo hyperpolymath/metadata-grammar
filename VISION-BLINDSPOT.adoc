@@ -74,7 +74,7 @@ What metadata-grammar really captures is the **evolving chronicle**:
 
 **But**: "Cartographic Journal of Reality" (evolving chronicle)
 
-verisimdb makes this temporal: We can query "What did we know on 2020-01-01?" and see our maps at that time. The chronicle is queryable.
+verisim makes this temporal: We can query "What did we know on 2020-01-01?" and see our maps at that time. The chronicle is queryable.
 
 == For Communication
 

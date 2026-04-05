@@ -78,7 +78,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 - [ ] Complete formal specification (EBNF, Idris2, category theory)
 - [ ] Idris2 proofs of correctness properties
 - [ ] Zig FFI implementation
-- [ ] verisimdb integration
+- [ ] verisim integration
 - [ ] Case studies with real phenomenal databases
 - [ ] Performance evaluation
 - [ ] Empirical comparison to VoID/DCAT
@@ -120,7 +120,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
    - Core concepts (D_p, coverage, blind spots)
    - Homoiconic containers
    - Metamorphic transformations
-   - verisimdb as cartographic index
+   - verisim as cartographic index
 
 5. Architecture Sketch
    - Idris2 formal specification
@@ -179,7 +179,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 | Phase 2 complete (impl)
 | Aug 1, 2026
-| verisimdb integration, case studies
+| verisim integration, case studies
 
 | Full paper draft
 | Sep 1, 2026
@@ -218,7 +218,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 5. **Architecture Sketch** (2 pages)
    - Formal specification approach
    - Storage independence
-   - verisimdb integration
+   - verisim integration
 
 6. **Implications & Future Work** (2 pages)
    - Reframing AI ethics, data science, scientific method
@@ -258,7 +258,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 **Objection 3**: "The philosophy is interesting but impractical"
 
-**Response**: Concrete impact on AI ethics (map coverage gaps instead of explaining models), data science (guide exploration not just interpretation), and scientific method (identify unmeasured domains). Practical architecture with verisimdb, SQL layer, and federation protocol.
+**Response**: Concrete impact on AI ethics (map coverage gaps instead of explaining models), data science (guide exploration not just interpretation), and scientific method (identify unmeasured domains). Practical architecture with verisim, SQL layer, and federation protocol.
 
 **Objection 4**: "Coverage estimates (15%/25%/60%) are made up"
 

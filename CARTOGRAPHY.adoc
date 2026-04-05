@@ -18,7 +18,7 @@ This guide shows how to use **metadata-grammar** for practical data cartographyâ
 - Transparent and inspectable
 - Schema-defined structure
 - Known provenance
-- Registered with verisimdb
+- Registered with verisim
 
 **How to work with it**:
 - Catalog databases using metadata-grammar
@@ -170,10 +170,10 @@ This guide shows how to use **metadata-grammar** for practical data cartographyâ
     prov:used :QualityControlAlgorithm-v3 .
 ```
 
-=== Step 6: Register with verisimdb
+=== Step 6: Register with verisim
 
 ```turtle
-@prefix vsim: <https://hyperpolymath.org/ns/verisimdb#> .
+@prefix vsim: <https://hyperpolymath.org/ns/verisim#> .
 
 :MyObservation
     # Join the federation
@@ -193,7 +193,7 @@ This guide shows how to use **metadata-grammar** for practical data cartographyâ
 
 === Discovering Databases
 
-**Query verisimdb for coverage**:
+**Query verisim for coverage**:
 
 ```sparql
 PREFIX mg: <https://hyperpolymath.org/ns/metadata-grammar#>
@@ -325,12 +325,12 @@ WHERE {
 **"What did we know about air quality on 2022-06-01?"**
 
 ```sparql
-PREFIX vsim: <https://hyperpolymath.org/ns/verisimdb#>
+PREFIX vsim: <https://hyperpolymath.org/ns/verisim#>
 PREFIX mg: <https://hyperpolymath.org/ns/metadata-grammar#>
 
 SELECT ?coverage ?uncertainty ?blindSpots
 WHERE {
-    # Query verisimdb at specific time
+    # Query verisim at specific time
     vsim:AtTime("2022-06-01") {
         :AirQualityDB
             mg:spatialCoverage ?coverage ;
@@ -553,7 +553,7 @@ WHERE {
 1. **Create** phenomenal databases with explicit coverage boundaries
 2. **Mark** known blind spots (Zone 2) honestly
 3. **Acknowledge** unknown darkness (Zone 3) humbly
-4. **Register** with verisimdb to join the federation
+4. **Register** with verisim to join the federation
 5. **Track** cartographic evolution as understanding improves
 6. **Guide** exploration into darkness to expand the white box
 
