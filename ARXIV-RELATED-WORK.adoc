@@ -1,7 +1,7 @@
 = Related Work Section (Draft for arXiv Position Paper)
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 == Related Work
 
@@ -146,6 +146,6 @@ The novelty is not the concepts—it's their **formalization and systematic appl
 
 == License
 
-This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0

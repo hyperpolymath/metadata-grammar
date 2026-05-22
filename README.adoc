@@ -1,6 +1,6 @@
 = Journey Grammar for Databases (JGD)
 :toc:
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 image:https://img.shields.io/badge/license-PMPL--1.0--or--later-indigo[License]
 image:https://img.shields.io/badge/status-position--paper--ready-green[Status]
@@ -251,9 +251,9 @@ See link:ROADMAP.adoc[ROADMAP.adoc] for complete plan.
 
 == License
 
-Licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+Licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0
 
 == Author
 

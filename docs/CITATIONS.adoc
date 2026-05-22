@@ -10,7 +10,7 @@
   title = {metadata-grammar},
   year = {2026},
   url = {https://github.com/hyperpolymath/metadata-grammar},
-  license = {PMPL-1.0-or-later}
+  license = {MPL-2.0}
 }
 ----
 

@@ -1,7 +1,7 @@
 = Journey Grammar for Databases - Documentation Index
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 This document indexes all JGD documentation with status and purpose.
 
@@ -162,7 +162,7 @@ All documentation is complete, current, and cross-referenced. The repository is 
 |File |Purpose |Status
 
 |LICENSE
-|PMPL-1.0-or-later full text
+|MPL-2.0 full text
 |✓ Complete
 
 |CONTRIBUTING.md
@@ -260,7 +260,7 @@ Roadmap provides complete plan. Implementation to follow.
 
 All documentation follows these standards:
 
-✓ **SPDX headers**: All files have `SPDX-License-Identifier: PMPL-1.0-or-later`
+✓ **SPDX headers**: All files have `SPDX-License-Identifier: MPL-2.0`
 ✓ **Author attribution**: Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 ✓ **Cross-references**: Documents link to each other appropriately
 ✓ **AsciiDoc format**: Consistent formatting, table of contents where appropriate
@@ -306,6 +306,6 @@ All documentation follows these standards:
 
 == License
 
-This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0

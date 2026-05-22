@@ -3,7 +3,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :doctype: article
 :toc: left
 :toclevels: 3
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 :keywords: database metadata, data catalogs, epistemology, cartography, semantic web, unknown unknowns
 :categories: cs.DB, cs.AI, cs.LO, cs.DL
 
@@ -892,6 +892,6 @@ This work builds on foundational insights from Alfred Korzybski (map/territory),
 
 == License
 
-This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0

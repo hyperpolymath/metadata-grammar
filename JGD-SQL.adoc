@@ -2,7 +2,7 @@
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
 :toclevels: 3
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 == Overview
 
@@ -803,6 +803,6 @@ WHERE region = 'online-sales';
 
 == License
 
-This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0

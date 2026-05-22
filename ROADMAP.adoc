@@ -1,7 +1,7 @@
 = Journey Grammar for Databases (JGD) - Roadmap
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 == Vision
 
@@ -290,6 +290,6 @@ See link:CONTRIBUTING.md[CONTRIBUTING.md] for how to contribute to JGD developme
 
 == License
 
-This roadmap is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This roadmap is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0

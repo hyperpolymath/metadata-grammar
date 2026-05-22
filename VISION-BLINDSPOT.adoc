@@ -1,7 +1,7 @@
 = The Vision Blind Spot: Where We've Been Looking
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 == The Two Blind Spots
 
@@ -90,6 +90,6 @@ verisim makes this temporal: We can query "What did we know on 2020-01-01?" and 
 
 == License
 
-This document is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0

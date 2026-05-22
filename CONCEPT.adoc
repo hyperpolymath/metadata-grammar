@@ -1,7 +1,7 @@
 = Metadata Grammar: Integrated Successor to VoID, Dublin Core, and DCAT
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
-:license: PMPL-1.0-or-later
+:license: MPL-2.0
 
 == Overview
 
@@ -267,7 +267,7 @@ Runtime validation via SHACL shapes:
     mg:creator :JonathanJewell ;
     mg:created "2026-01-31"^^xsd:date ;
     mg:modified "2026-01-31"^^xsd:date ;
-    mg:license <https://spdx.org/licenses/PMPL-1.0-or-later> ;
+    mg:license <https://spdx.org/licenses/MPL-2.0> ;
 
     # Technical metadata
     mg:tripleCount 1000000 ;
@@ -333,6 +333,6 @@ Runtime validation via SHACL shapes:
 
 == License
 
-This specification is licensed under the Palimpsest Meta-Philosophical License (PMPL-1.0-or-later).
+This specification is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: PMPL-1.0-or-later
+SPDX-License-Identifier: MPL-2.0
