@@ -253,7 +253,7 @@ See link:ROADMAP.adoc[ROADMAP.adoc] for complete plan.
 
 Licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: MPL-2.0
+SPDX-License-Identifier: CC-BY-SA-4.0
 
 == Author
 
