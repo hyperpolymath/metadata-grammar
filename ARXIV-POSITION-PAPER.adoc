@@ -894,4 +894,4 @@ This work builds on foundational insights from Alfred Korzybski (map/territory),
 
 This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: MPL-2.0
+SPDX-License-Identifier: CC-BY-SA-4.0

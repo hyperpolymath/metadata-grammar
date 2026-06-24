@@ -92,4 +92,4 @@ verisim makes this temporal: We can query "What did we know on 2020-01-01?" and 
 
 This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: MPL-2.0
+SPDX-License-Identifier: CC-BY-SA-4.0

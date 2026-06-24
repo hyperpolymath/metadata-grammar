@@ -260,7 +260,7 @@ Roadmap provides complete plan. Implementation to follow.
 
 All documentation follows these standards:
 
-✓ **SPDX headers**: All files have `SPDX-License-Identifier: MPL-2.0`
+✓ **SPDX headers**: All files have `SPDX-License-Identifier: CC-BY-SA-4.0`
 ✓ **Author attribution**: Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 ✓ **Cross-references**: Documents link to each other appropriately
 ✓ **AsciiDoc format**: Consistent formatting, table of contents where appropriate
@@ -308,4 +308,4 @@ All documentation follows these standards:
 
 This document is licensed under the Palimpsest Meta-Philosophical License (MPL-2.0).
 
-SPDX-License-Identifier: MPL-2.0
+SPDX-License-Identifier: CC-BY-SA-4.0
