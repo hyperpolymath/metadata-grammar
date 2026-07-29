@@ -14,5 +14,4 @@
   (synopsis "metadata-grammar")
   (description "metadata-grammar — part of the hyperpolymath ecosystem.")
   (home-page "https://github.com/hyperpolymath/metadata-grammar")
-  (license ((@@ (guix licenses) license) "PMPL-1.0-or-later"
-             "https://github.com/hyperpolymath/palimpsest-license")))
+  (license mpl2.0))
