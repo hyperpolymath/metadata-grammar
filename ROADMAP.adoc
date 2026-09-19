@@ -279,7 +279,7 @@ Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 == Contributing
 
-See link:CONTRIBUTING.md[CONTRIBUTING.md] for how to contribute to JGD development.
+See link:.github/CONTRIBUTING.md[CONTRIBUTING.md] for how to contribute to JGD development.
 
 **Key areas needing expertise**:
 * Category theory (metamorphic transformations)
